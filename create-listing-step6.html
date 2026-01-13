@@ -32,10 +32,12 @@
                 if (basicsSection) {
                     // Update unit name badge
                     const unitBadge = basicsSection.querySelector('span.bg-emerald-50');
-                    if (unitBadge && savedData.unit.name) {
-                        unitBadge.textContent = `FEATURED ${savedData.unit.name}`;
-                    } else if (unitBadge && !savedData.unit.name) {
-                        unitBadge.textContent = 'FEATURED';
+                    if (unitBadge) {
+                        if (savedData.unit.name && savedData.unit.name.trim() !== '') {
+                            unitBadge.textContent = `FEATURED ${savedData.unit.name}`;
+                        } else {
+                            unitBadge.textContent = 'FEATURED';
+                        }
                     }
 
                     // Update unit details
@@ -185,8 +187,20 @@
                 if (applicationsSection) {
                     const checkboxes = applicationsSection.querySelectorAll('input[type="checkbox"]');
                     if (checkboxes.length >= 2) {
-                        checkboxes[0].checked = savedData.applications.enabled || false;
+                        const enableCheckbox = document.getElementById('enableApplicationsCheckbox');
+                        if (enableCheckbox) {
+                            enableCheckbox.checked = savedData.applications.enabled || false;
+                            toggleDateAvailable(); // Show/hide date section based on checkbox state
+                        }
                         checkboxes[1].checked = savedData.applications.agreementAccepted || false;
+                    }
+                    
+                    // Load date available if it exists
+                    if (savedData.unit?.dateAvailable) {
+                        const dateInput = document.getElementById('dateAvailable');
+                        if (dateInput) {
+                            dateInput.value = savedData.unit.dateAvailable;
+                        }
                     }
                 }
             }
@@ -479,9 +493,18 @@
                                                 </p>
                                             </div>
                                             <label class="flex items-start gap-3 cursor-pointer">
-                                                <input type="checkbox" class="mt-0.5 w-4 h-4 rounded border-zinc-300 text-emerald-600 focus:ring-emerald-500">
+                                                <input type="checkbox" id="enableApplicationsCheckbox" class="mt-0.5 w-4 h-4 rounded border-zinc-300 text-emerald-600 focus:ring-emerald-500" onchange="toggleDateAvailable()">
                                                 <span class="text-sm text-zinc-700">Enable Applications</span>
                                             </label>
+                                        </div>
+                                        
+                                        <!-- Date Available (shown only when Enable Applications is checked) -->
+                                        <div id="dateAvailableSection" class="hidden mt-4">
+                                            <label class="block text-sm font-medium text-zinc-900 mb-2">Date Available</label>
+                                            <div class="relative">
+                                                <input type="date" id="dateAvailable" class="w-full px-4 py-2 rounded-md border border-zinc-200 bg-white text-zinc-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent" onchange="saveDateAvailable()">
+                                                <iconify-icon icon="lucide:calendar" width="18" class="absolute right-3 top-2.5 text-zinc-400 pointer-events-none"></iconify-icon>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="border-t border-zinc-200 pt-6">
@@ -535,6 +558,29 @@
             const chevron = document.querySelector('.account-chevron');
             submenu.classList.toggle('hidden');
             chevron.classList.toggle('rotate-180');
+        }
+
+        // Toggle Date Available section based on Enable Applications checkbox
+        function toggleDateAvailable() {
+            const checkbox = document.getElementById('enableApplicationsCheckbox');
+            const dateSection = document.getElementById('dateAvailableSection');
+            
+            if (checkbox && dateSection) {
+                if (checkbox.checked) {
+                    dateSection.classList.remove('hidden');
+                } else {
+                    dateSection.classList.add('hidden');
+                }
+            }
+        }
+
+        // Save date available to localStorage
+        function saveDateAvailable() {
+            const dateAvailable = document.getElementById('dateAvailable')?.value || '';
+            const current = ListingStorage.getCurrentListing() || {};
+            if (!current.unit) current.unit = {};
+            current.unit.dateAvailable = dateAvailable;
+            ListingStorage.saveCurrentListing(current);
         }
 
         // Validate agreement checkbox and enable/disable Create Rental button
