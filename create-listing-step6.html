@@ -179,28 +179,15 @@
                 }
             }
 
-            // Update Applications section checkboxes
+            // Update Agreement section checkbox
             if (savedData.applications) {
                 const applicationsSection = Array.from(document.querySelectorAll('h2.text-lg.font-medium')).find(h => 
-                    h.textContent === 'Applications & Screening'
+                    h.textContent === 'Agreement'
                 )?.closest('.border');
                 if (applicationsSection) {
-                    const checkboxes = applicationsSection.querySelectorAll('input[type="checkbox"]');
-                    if (checkboxes.length >= 2) {
-                        const enableCheckbox = document.getElementById('enableApplicationsCheckbox');
-                        if (enableCheckbox) {
-                            enableCheckbox.checked = savedData.applications.enabled || false;
-                            toggleDateAvailable(); // Show/hide date section based on checkbox state
-                        }
-                        checkboxes[1].checked = savedData.applications.agreementAccepted || false;
-                    }
-                    
-                    // Load date available if it exists
-                    if (savedData.unit?.dateAvailable) {
-                        const dateInput = document.getElementById('dateAvailable');
-                        if (dateInput) {
-                            dateInput.value = savedData.unit.dateAvailable;
-                        }
+                    const agreementCheckbox = document.getElementById('agreementCheckbox');
+                    if (agreementCheckbox) {
+                        agreementCheckbox.checked = savedData.applications.agreementAccepted || false;
                     }
                 }
             }
@@ -467,46 +454,12 @@
                                 </div>
                             </div>
 
-                            <!-- Applications & Screening Section -->
+                            <!-- Agreement Section -->
                             <div class="border border-zinc-200 rounded-lg p-6">
                                 <div class="flex items-start justify-between mb-4">
-                                    <div class="flex items-center gap-2">
-                                        <h2 class="text-lg font-medium text-zinc-900">Applications & Screening</h2>
-                                        <a href="#" class="text-sm text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1">
-                                            <iconify-icon icon="lucide:info" width="16"></iconify-icon>
-                                            Learn More
-                                        </a>
-                                    </div>
+                                    <h2 class="text-lg font-medium text-zinc-900">Agreement</h2>
                                 </div>
                                 <div class="space-y-6">
-                                    <div>
-                                        <div class="mb-4">
-                                            <div class="flex items-center gap-2 mb-3">
-                                                <span class="text-sm font-medium text-blue-600">TransUnion</span>
-                                            </div>
-                                            <p class="text-sm text-zinc-600 leading-relaxed mb-4">
-                                                Enable an 'Apply Now' button to your listing and accept applications. Incoming applications include income and employment information, TransUnion® credit reports, evictions, and criminal records at no cost to you.
-                                            </p>
-                                            <div class="p-4 bg-zinc-50 rounded-md border border-zinc-200 mb-4">
-                                                <p class="text-xs text-zinc-600 leading-relaxed">
-                                                    By enabling applications, I certify applicable disclosures have been made to the applicant(s) and the application is in compliance with the obligations under ICRAA (see Cal. Civ. Code 1786.16(a)(4) and (b), as amended).
-                                                </p>
-                                            </div>
-                                            <label class="flex items-start gap-3 cursor-pointer">
-                                                <input type="checkbox" id="enableApplicationsCheckbox" class="mt-0.5 w-4 h-4 rounded border-zinc-300 text-emerald-600 focus:ring-emerald-500" onchange="toggleDateAvailable()">
-                                                <span class="text-sm text-zinc-700">Enable Applications</span>
-                                            </label>
-                                        </div>
-                                        
-                                        <!-- Date Available (shown only when Enable Applications is checked) -->
-                                        <div id="dateAvailableSection" class="hidden mt-4">
-                                            <label class="block text-sm font-medium text-zinc-900 mb-2">Date Available</label>
-                                            <div class="relative">
-                                                <input type="date" id="dateAvailable" class="w-full px-4 py-2 rounded-md border border-zinc-200 bg-white text-zinc-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent" onchange="saveDateAvailable()">
-                                                <iconify-icon icon="lucide:calendar" width="18" class="absolute right-3 top-2.5 text-zinc-400 pointer-events-none"></iconify-icon>
-                                            </div>
-                                        </div>
-                                    </div>
                                     <div class="border-t border-zinc-200 pt-6">
                                         <label class="flex items-start gap-3 cursor-pointer">
                                             <input type="checkbox" id="agreementCheckbox" class="mt-0.5 w-4 h-4 rounded border-zinc-300 text-emerald-600 focus:ring-emerald-500" onchange="validateAgreement()">
@@ -558,29 +511,6 @@
             const chevron = document.querySelector('.account-chevron');
             submenu.classList.toggle('hidden');
             chevron.classList.toggle('rotate-180');
-        }
-
-        // Toggle Date Available section based on Enable Applications checkbox
-        function toggleDateAvailable() {
-            const checkbox = document.getElementById('enableApplicationsCheckbox');
-            const dateSection = document.getElementById('dateAvailableSection');
-            
-            if (checkbox && dateSection) {
-                if (checkbox.checked) {
-                    dateSection.classList.remove('hidden');
-                } else {
-                    dateSection.classList.add('hidden');
-                }
-            }
-        }
-
-        // Save date available to localStorage
-        function saveDateAvailable() {
-            const dateAvailable = document.getElementById('dateAvailable')?.value || '';
-            const current = ListingStorage.getCurrentListing() || {};
-            if (!current.unit) current.unit = {};
-            current.unit.dateAvailable = dateAvailable;
-            ListingStorage.saveCurrentListing(current);
         }
 
         // Validate agreement checkbox and enable/disable Create Rental button
@@ -694,10 +624,8 @@
             const nameParts = contactName.split(' ');
 
             // Extract applications settings
-            const applicationsSection = amenitiesSections.find(h => h.textContent === 'Applications & Screening')?.closest('.border');
-            const checkboxes = applicationsSection?.querySelectorAll('input[type="checkbox"]') || [];
-            const applicationsEnabled = checkboxes[0]?.checked || false;
-            const agreementAccepted = checkboxes[1]?.checked || false;
+            const agreementCheckbox = document.getElementById('agreementCheckbox');
+            const agreementAccepted = agreementCheckbox?.checked || false;
 
                 // Build listing data object from DOM
                 listingData = {
@@ -747,23 +675,18 @@
                     contactPreference: ''
                 },
                 applications: {
-                    enabled: applicationsEnabled,
+                    enabled: false,
                     agreementAccepted: agreementAccepted
                 };
             } else {
                 // Use saved data, but ensure all fields are present
-                // Merge with any data extracted from review page checkboxes
-                const applicationsSection = Array.from(document.querySelectorAll('h2.text-lg.font-medium')).find(h => 
-                    h.textContent === 'Applications & Screening'
-                )?.closest('.border');
-                if (applicationsSection) {
-                    const checkboxes = applicationsSection.querySelectorAll('input[type="checkbox"]');
-                    if (checkboxes.length >= 2) {
-                        listingData.applications = {
-                            enabled: checkboxes[0].checked || false,
-                            agreementAccepted: checkboxes[1].checked || false
-                        };
-                    }
+                // Merge with any data extracted from review page checkbox
+                const agreementCheckbox = document.getElementById('agreementCheckbox');
+                if (agreementCheckbox) {
+                    listingData.applications = {
+                        enabled: false,
+                        agreementAccepted: agreementCheckbox.checked || false
+                    };
                 }
             }
 

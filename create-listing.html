@@ -170,24 +170,16 @@
                                 </a>
                             </div>
 
-                            <!-- Show on Listing Toggle -->
-                            <div class="mb-6 flex items-center justify-between p-4 bg-zinc-50 rounded-lg border border-zinc-200">
-                                <div>
-                                    <label class="text-sm font-medium text-zinc-900">Show on Listing</label>
-                                    <p class="text-xs text-zinc-500 mt-1">Make this listing visible to renters</p>
+                            <!-- Vacant/Rented Toggle -->
+                            <div class="mb-6 flex items-center justify-center p-4 bg-zinc-50 rounded-lg border border-zinc-200">
+                                <div class="flex items-center gap-3">
+                                    <span id="vacantLabel" class="text-sm font-medium text-zinc-900 cursor-pointer" onclick="setVacantRented(false)">vacant</span>
+                                    <div class="relative inline-block w-14 h-7 align-middle select-none transition duration-200 ease-in">
+                                        <input type="checkbox" name="show-listing" id="show-listing" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-2 border-zinc-300 appearance-none cursor-pointer checked:border-emerald-500 transition-all duration-200 top-1/2 -translate-y-1/2 left-0.5 checked:left-auto checked:right-0.5" onchange="toggleShowListing()">
+                                        <label for="show-listing" class="toggle-label block overflow-hidden h-7 rounded-full bg-zinc-300 cursor-pointer transition-colors duration-200"></label>
+                                    </div>
+                                    <span id="rentedLabel" class="text-sm font-medium text-zinc-500 cursor-pointer" onclick="setVacantRented(true)">rented</span>
                                 </div>
-                                <div class="relative inline-block w-12 h-6 align-middle select-none transition duration-200 ease-in">
-                                    <input type="checkbox" name="show-listing" id="show-listing" class="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-2 border-zinc-300 appearance-none cursor-pointer checked:border-emerald-500 transition-all duration-200 right-0" checked>
-                                    <label for="show-listing" class="toggle-label block overflow-hidden h-6 rounded-full bg-emerald-500 cursor-pointer transition-colors duration-200"></label>
-                                </div>
-                            </div>
-
-                            <!-- Room for Rent Checkbox -->
-                            <div class="mb-8">
-                                <label class="flex items-start gap-3 cursor-pointer">
-                                    <input type="checkbox" class="mt-1 w-4 h-4 rounded border-zinc-300 text-emerald-600 focus:ring-emerald-500">
-                                    <span class="text-sm text-zinc-700">This is a room for rent with a shared living space.</span>
-                                </label>
                             </div>
 
                             <!-- Unit Details Section -->
@@ -204,6 +196,14 @@
                                         <input type="text" id="unitName" class="w-full px-4 py-2 rounded-md border border-zinc-200 bg-white text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent" oninput="saveUnitData(); validateForm();">
                                     </div>
 
+                                    <!-- Date Available -->
+                                    <div>
+                                        <label class="block text-sm font-medium text-zinc-900 mb-2">Date Available</label>
+                                        <div class="relative">
+                                            <input type="date" id="dateAvailable" class="w-full px-4 py-2 rounded-md border border-zinc-200 bg-white text-zinc-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent disabled:bg-zinc-50 disabled:text-zinc-400 disabled:cursor-not-allowed" onchange="saveUnitData()">
+                                            <iconify-icon icon="lucide:calendar" width="18" class="absolute right-3 top-2.5 text-zinc-400 pointer-events-none"></iconify-icon>
+                                        </div>
+                                    </div>
 
                                     <!-- Beds -->
                                     <div>
@@ -791,6 +791,61 @@
             chevron.classList.toggle('rotate-180');
         }
 
+        // Set vacant/rented state
+        function setVacantRented(isRented) {
+            const showListingCheckbox = document.getElementById('show-listing');
+            if (showListingCheckbox) {
+                showListingCheckbox.checked = isRented;
+                toggleShowListing();
+            }
+        }
+
+        // Toggle Show on Listing and enable/disable Date Available field
+        function toggleShowListing() {
+            const showListingCheckbox = document.getElementById('show-listing');
+            const dateAvailableInput = document.getElementById('dateAvailable');
+            const toggleLabel = document.querySelector('label[for="show-listing"]');
+            const vacantLabel = document.getElementById('vacantLabel');
+            const rentedLabel = document.getElementById('rentedLabel');
+            
+            if (showListingCheckbox && dateAvailableInput && toggleLabel) {
+                const isRented = showListingCheckbox.checked;
+                
+                // Update toggle label background color
+                if (isRented) {
+                    toggleLabel.classList.remove('bg-zinc-300');
+                    toggleLabel.classList.add('bg-emerald-500');
+                } else {
+                    toggleLabel.classList.remove('bg-emerald-500');
+                    toggleLabel.classList.add('bg-zinc-300');
+                }
+                
+                // Update label text colors
+                if (vacantLabel && rentedLabel) {
+                    if (isRented) {
+                        vacantLabel.classList.remove('text-zinc-900');
+                        vacantLabel.classList.add('text-zinc-500');
+                        rentedLabel.classList.remove('text-zinc-500');
+                        rentedLabel.classList.add('text-zinc-900');
+                    } else {
+                        vacantLabel.classList.remove('text-zinc-500');
+                        vacantLabel.classList.add('text-zinc-900');
+                        rentedLabel.classList.remove('text-zinc-900');
+                        rentedLabel.classList.add('text-zinc-500');
+                    }
+                }
+                
+                // Enable/disable Date Available field (disabled when rented)
+                dateAvailableInput.disabled = isRented;
+                
+                // Clear date if rented
+                if (isRented) {
+                    dateAvailableInput.value = '';
+                    saveUnitData();
+                }
+            }
+        }
+
         function openUnitPhotosModal() {
             const modal = document.getElementById('unitPhotosModal');
             modal.classList.remove('hidden');
@@ -1044,17 +1099,17 @@
             const leaseLength = document.getElementById('leaseLength')?.value || '';
             const yearBuilt = document.getElementById('yearBuilt')?.value || '';
 
-            // Check if all fields are filled
+            // Check if all required fields are filled
             // beds can be Studio, 1, 2, 3, or 4+ (any selected value is valid)
             // baths cannot be "Select" (the placeholder)
+            // yearBuilt is optional, so we don't require it
             const isValid = unitName !== '' && 
                            beds !== '' && 
                            baths !== '' && baths !== 'Select' && 
                            size !== '' && parseFloat(size) > 0 &&
                            monthlyRent !== '' && parseFloat(monthlyRent) > 0 &&
                            deposit !== '' && parseFloat(deposit) > 0 &&
-                           leaseLength !== '' && parseFloat(leaseLength) > 0 &&
-                           yearBuilt !== '' && parseFloat(yearBuilt) > 0;
+                           leaseLength !== '' && parseFloat(leaseLength) > 0;
 
             const button = document.getElementById('saveContinueButton');
             const warning = document.getElementById('validationWarning');
@@ -1074,10 +1129,21 @@
 
         // Validate and continue to next step
         function validateAndContinue() {
-            if (validateForm()) {
+            console.log('validateAndContinue called');
+            const isValid = validateForm();
+            console.log('Form validation result:', isValid);
+            
+            if (isValid) {
+                console.log('Saving step 1 data...');
                 saveStep1Data();
+                console.log('Navigating to step 2...');
                 window.location.href = 'create-listing-step2.html';
             } else {
+                console.log('Validation failed');
+                const warning = document.getElementById('validationWarning');
+                if (warning) {
+                    warning.classList.remove('hidden');
+                }
                 alert('Please fill in all required fields before continuing.');
             }
         }
@@ -1085,7 +1151,9 @@
         // Real-time save function - saves data as user types
         function saveUnitData() {
             const unitName = document.getElementById('unitName')?.value || '';
-            const dateAvailable = document.getElementById('dateAvailable')?.value || '';
+            const showListingCheckbox = document.getElementById('show-listing');
+            // Only save dateAvailable when vacant (not rented/checked)
+            const dateAvailable = !showListingCheckbox?.checked ? (document.getElementById('dateAvailable')?.value || '') : '';
             const beds = document.getElementById('beds')?.value || '';
             const baths = document.getElementById('baths')?.value || '';
             const size = document.getElementById('size')?.value || '';
@@ -1099,6 +1167,7 @@
 
             const step1Data = {
                 address: '214 VIA ROBINA, SAN CLEMENTE, CA 92672',
+                showOnListing: showListingCheckbox?.checked || false,
                 unit: {
                     name: unitName,
                     dateAvailable: dateAvailable,
@@ -1130,8 +1199,24 @@
         // Load saved data when page loads
         document.addEventListener('DOMContentLoaded', function() {
             const saved = ListingStorage.getCurrentListing();
+            const showListingCheckbox = document.getElementById('show-listing');
+            
+            // Load vacant/rented preference (default to vacant/unchecked)
+            if (saved?.showOnListing !== undefined) {
+                showListingCheckbox.checked = saved.showOnListing;
+            } else {
+                showListingCheckbox.checked = false; // Default to vacant
+            }
+            
+            // Initialize toggle state
+            toggleShowListing();
+            
             if (saved?.unit) {
                 if (saved.unit.name) document.getElementById('unitName').value = saved.unit.name;
+                // Only load dateAvailable if vacant (not rented)
+                if (saved.unit.dateAvailable && !showListingCheckbox.checked) {
+                    document.getElementById('dateAvailable').value = saved.unit.dateAvailable;
+                }
                 if (saved.unit.beds) document.getElementById('beds').value = saved.unit.beds;
                 if (saved.unit.baths) document.getElementById('baths').value = saved.unit.baths;
                 if (saved.unit.size) document.getElementById('size').value = saved.unit.size;
@@ -1146,23 +1231,26 @@
 
         // Save step 1 data before navigating to next step
         function saveStep1Data(event) {
-            // Collect form data
-            const form = document.querySelector('form');
-            const unitName = form?.querySelector('input[type="text"]')?.value || '';
-            const dateAvailable = form?.querySelector('input[type="date"]')?.value || '';
-            const beds = form?.querySelector('select')?.value || '';
-            const baths = Array.from(form?.querySelectorAll('select'))[1]?.value || '';
-            const size = Array.from(form?.querySelectorAll('input[type="number"]'))[0]?.value || '';
-            const monthlyRent = Array.from(form?.querySelectorAll('input[type="number"]'))[1]?.value || '';
-            const deposit = Array.from(form?.querySelectorAll('input[type="number"]'))[2]?.value || '';
-            const leaseLength = Array.from(form?.querySelectorAll('input[type="number"]'))[3]?.value || '12';
-            const yearBuilt = Array.from(form?.querySelectorAll('input[type="number"]'))[4]?.value || '';
+            // Collect form data directly by ID
+            const showListingCheckbox = document.getElementById('show-listing');
+            const unitName = document.getElementById('unitName')?.value || '';
+            const dateAvailableInput = document.getElementById('dateAvailable');
+            // Only save dateAvailable when vacant (not rented/checked)
+            const dateAvailable = (!showListingCheckbox?.checked && dateAvailableInput?.value) ? dateAvailableInput.value : '';
+            const beds = document.getElementById('beds')?.value || '';
+            const baths = document.getElementById('baths')?.value || '';
+            const size = document.getElementById('size')?.value || '';
+            const monthlyRent = document.getElementById('monthlyRent')?.value || '';
+            const deposit = document.getElementById('deposit')?.value || '';
+            const leaseLength = document.getElementById('leaseLength')?.value || '12';
+            const yearBuilt = document.getElementById('yearBuilt')?.value || '';
 
             // Get existing saved data to preserve amenities, description, and photos
             const current = ListingStorage.getCurrentListing() || {};
 
             const step1Data = {
                 address: '214 VIA ROBINA, SAN CLEMENTE, CA 92672', // From header
+                showOnListing: showListingCheckbox?.checked || false,
                 unit: {
                     name: unitName,
                     dateAvailable: dateAvailable,
