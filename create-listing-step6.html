@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create a Listing - Step 6: Review | Rental Manager</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/base.css">
+    <script src="js/listing-storage.js"></script>
+</head>
+<body class="bg-white text-zinc-900 antialiased selection:bg-emerald-100 selection:text-emerald-900 min-h-screen">
+
+    <!-- Top Header -->
+    <header class="fixed top-0 right-0 left-0 md:left-64 h-14 bg-white border-b border-zinc-100 z-40">
+        <div class="h-full flex items-center justify-between px-6">
+            <div class="md:hidden">
+                <button class="p-2 hover:bg-zinc-50 rounded-md transition-colors">
+                    <iconify-icon icon="lucide:menu" width="20" class="text-zinc-600"></iconify-icon>
+                </button>
+            </div>
+            <div class="flex items-center gap-4 ml-auto">
+                <div class="flex items-center gap-2 px-3 py-1.5 hover:bg-zinc-50 rounded-md cursor-pointer transition-colors">
+                    <div class="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700 text-xs font-medium">R</div>
+                    <span class="text-sm font-medium text-zinc-900 hidden sm:block">Rita</span>
+                    <iconify-icon icon="lucide:chevron-down" width="16" class="text-zinc-400"></iconify-icon>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Sidebar Navigation -->
+    <aside class="fixed top-0 left-0 bottom-0 w-64 bg-white border-r border-zinc-100 z-50 overflow-y-auto hidden md:block">
+        <div class="p-6 border-b border-zinc-100">
+            <a href="index.html" class="flex items-center gap-2">
+                <div class="w-6 h-6 bg-emerald-600 rounded-md flex items-center justify-center text-white">
+                    <iconify-icon icon="lucide:building-2" width="16" stroke-width="1.5"></iconify-icon>
+                </div>
+                <span class="text-sm font-semibold tracking-tight">RENTAL MANAGER</span>
+            </a>
+        </div>
+        <nav class="p-4 space-y-1">
+            <a href="dashboard.html" class="flex items-center gap-3 px-3 py-2 text-zinc-600 hover:bg-zinc-50 rounded-md transition-colors">
+                <iconify-icon icon="lucide:layout-dashboard" width="18" stroke-width="1.5"></iconify-icon>
+                <span class="text-sm font-medium">Dashboard</span>
+            </a>
+            <a href="properties.html" class="flex items-center gap-3 px-3 py-2 bg-emerald-50 border border-emerald-100 rounded-md text-emerald-700">
+                <iconify-icon icon="lucide:home" width="18" stroke-width="1.5"></iconify-icon>
+                <span class="text-sm font-medium">Properties</span>
+                <span class="flex h-2 w-2 rounded-full bg-emerald-500 ml-auto"></span>
+            </a>
+            <a href="applications.html" class="flex items-center gap-3 px-3 py-2 text-zinc-600 hover:bg-zinc-50 rounded-md transition-colors">
+                <iconify-icon icon="lucide:users" width="18" stroke-width="1.5"></iconify-icon>
+                <span class="text-sm font-medium">Applications</span>
+            </a>
+            <a href="payments.html" class="flex items-center gap-3 px-3 py-2 text-zinc-600 hover:bg-zinc-50 rounded-md transition-colors">
+                <iconify-icon icon="lucide:wallet" width="18" stroke-width="1.5"></iconify-icon>
+                <span class="text-sm font-medium">Payments</span>
+            </a>
+            <a href="leases.html" class="flex items-center gap-3 px-3 py-2 text-zinc-600 hover:bg-zinc-50 rounded-md transition-colors">
+                <iconify-icon icon="lucide:file-text" width="18" stroke-width="1.5"></iconify-icon>
+                <span class="text-sm font-medium">Residents & Leases</span>
+            </a>
+            <a href="reports.html" class="flex items-center gap-3 px-3 py-2 text-zinc-600 hover:bg-zinc-50 rounded-md transition-colors">
+                <iconify-icon icon="lucide:bar-chart-3" width="18" stroke-width="1.5"></iconify-icon>
+                <span class="text-sm font-medium">Reports</span>
+            </a>
+            <a href="maintenance.html" class="flex items-center gap-3 px-3 py-2 text-zinc-600 hover:bg-zinc-50 rounded-md transition-colors">
+                <iconify-icon icon="lucide:wrench" width="18" stroke-width="1.5"></iconify-icon>
+                <span class="text-sm font-medium">Maintenance</span>
+            </a>
+            <a href="expenses.html" class="flex items-center gap-3 px-3 py-2 text-zinc-600 hover:bg-zinc-50 rounded-md transition-colors">
+                <iconify-icon icon="lucide:receipt" width="18" stroke-width="1.5"></iconify-icon>
+                <span class="text-sm font-medium">Expenses</span>
+            </a>
+            <div class="pt-4 mt-4 border-t border-zinc-100 space-y-1">
+                <a href="messages.html" class="flex items-center gap-3 px-3 py-2 text-zinc-600 hover:bg-zinc-50 rounded-md transition-colors">
+                    <iconify-icon icon="lucide:mail" width="18" stroke-width="1.5"></iconify-icon>
+                    <span class="text-sm font-medium">Messages</span>
+                </a>
+                <a href="help.html" class="flex items-center gap-3 px-3 py-2 text-zinc-600 hover:bg-zinc-50 rounded-md transition-colors">
+                    <iconify-icon icon="lucide:help-circle" width="18" stroke-width="1.5"></iconify-icon>
+                    <span class="text-sm font-medium">Help</span>
+                </a>
+                <div class="account-dropdown">
+                    <button class="w-full flex items-center gap-3 px-3 py-2 text-zinc-600 hover:bg-zinc-50 rounded-md transition-colors" onclick="toggleAccountDropdown()">
+                        <iconify-icon icon="lucide:settings" width="18" stroke-width="1.5"></iconify-icon>
+                        <span class="text-sm font-medium">Account</span>
+                        <iconify-icon icon="lucide:chevron-down" width="14" class="text-zinc-400 ml-auto account-chevron transition-transform"></iconify-icon>
+                    </button>
+                    <div class="account-submenu hidden mt-1 ml-4 space-y-1">
+                        <a href="my-account.html" class="flex items-center gap-3 px-3 py-2 text-zinc-600 hover:bg-zinc-50 rounded-md transition-colors text-sm">
+                            My Account
+                        </a>
+                        <a href="banks-cards.html" class="flex items-center gap-3 px-3 py-2 text-zinc-600 hover:bg-zinc-50 rounded-md transition-colors text-sm">
+                            Banks & Cards
+                        </a>
+                        <a href="billing-history.html" class="flex items-center gap-3 px-3 py-2 text-zinc-600 hover:bg-zinc-50 rounded-md transition-colors text-sm">
+                            Billing History
+                        </a>
+                    </div>
+                </div>
+                <a href="feedback.html" class="flex items-center gap-3 px-3 py-2 text-zinc-600 hover:bg-zinc-50 rounded-md transition-colors">
+                    <iconify-icon icon="lucide:message-square" width="18" stroke-width="1.5"></iconify-icon>
+                    <span class="text-sm font-medium">Provide Feedback</span>
+                </a>
+            </div>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="md:ml-64 pt-14 min-h-screen bg-zinc-50">
+        <div class="p-6">
+            <div class="max-w-5xl mx-auto">
+                <!-- Address Header -->
+                <div class="mb-6">
+                    <p class="text-sm text-zinc-500 uppercase tracking-wide">214 VIA ROBINA, SAN CLEMENTE, CA 92672</p>
+                </div>
+
+                <!-- Main Form Card -->
+                <div class="bg-white rounded-lg border border-zinc-200 shadow-sm p-8">
+                    <div class="mb-8">
+                        <h1 class="text-2xl font-medium tracking-tight text-zinc-900 mb-2">Create a Listing</h1>
+                        <div class="flex items-center gap-2 text-sm text-zinc-500">
+                            <span class="font-medium">Step 6 of 6: Review</span>
+                            <span>•</span>
+                            <span>Review your information before you publish.</span>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+                        <!-- Left Sidebar - Steps -->
+                        <div class="lg:col-span-1">
+                            <div class="space-y-4">
+                                <div class="flex items-center gap-3">
+                                    <iconify-icon icon="lucide:check-circle" width="20" class="text-emerald-600"></iconify-icon>
+                                    <span class="text-sm font-medium text-zinc-900">Basics</span>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <iconify-icon icon="lucide:check-circle" width="20" class="text-emerald-600"></iconify-icon>
+                                    <span class="text-sm font-medium text-zinc-900">Amenities</span>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <iconify-icon icon="lucide:check-circle" width="20" class="text-emerald-600"></iconify-icon>
+                                    <span class="text-sm font-medium text-zinc-900">Media</span>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <iconify-icon icon="lucide:check-circle" width="20" class="text-emerald-600"></iconify-icon>
+                                    <span class="text-sm font-medium text-zinc-900">Description</span>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <iconify-icon icon="lucide:check-circle" width="20" class="text-emerald-600"></iconify-icon>
+                                    <span class="text-sm font-medium text-zinc-900">Contact</span>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <div class="w-5 h-5 rounded-full bg-emerald-600 flex items-center justify-center">
+                                        <span class="flex h-2 w-2 rounded-full bg-white"></span>
+                                    </div>
+                                    <span class="text-sm font-medium text-zinc-900">Review</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right Side - Review Sections -->
+                        <div class="lg:col-span-3 space-y-6">
+                            <!-- Basics Section -->
+                            <div class="border border-zinc-200 rounded-lg p-6">
+                                <div class="flex items-start justify-between mb-4">
+                                    <h2 class="text-lg font-medium text-zinc-900">Basics</h2>
+                                    <a href="create-listing.html" class="text-sm text-emerald-600 hover:text-emerald-700 font-medium">Edit Unit</a>
+                                </div>
+                                <div class="mb-3">
+                                    <span class="px-2 py-1 rounded bg-emerald-50 text-emerald-700 text-xs font-medium border border-emerald-100">FEATURED 14</span>
+                                </div>
+                                <div class="flex flex-wrap gap-4 text-sm text-zinc-700 mb-2">
+                                    <span><strong>2</strong> Beds</span>
+                                    <span><strong>1.5</strong> Baths</span>
+                                    <span><strong>1,000</strong> Sq Ft.</span>
+                                    <span><strong>$1,000</strong> Monthly Rent</span>
+                                    <span><strong>$1,000</strong> Deposit</span>
+                                    <span><strong>12</strong> Month Lease</span>
+                                </div>
+                                <p class="text-sm text-zinc-500">Available 01/13/2026</p>
+                            </div>
+
+                            <!-- Media Section -->
+                            <div class="border border-zinc-200 rounded-lg p-6">
+                                <div class="flex items-start justify-between mb-4">
+                                    <h2 class="text-lg font-medium text-zinc-900">Media</h2>
+                                    <a href="create-listing-step3.html" class="text-sm text-emerald-600 hover:text-emerald-700 font-medium">Edit Section</a>
+                                </div>
+                                <div class="space-y-4">
+                                    <div>
+                                        <h3 class="text-sm font-medium text-zinc-700 mb-2">Photos (1)</h3>
+                                        <div class="w-full h-48 bg-zinc-100 rounded-lg overflow-hidden">
+                                            <img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&h=600&fit=crop" alt="Property photo" class="w-full h-full object-cover">
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <h3 class="text-sm font-medium text-zinc-700 mb-1">Virtual Tours (0)</h3>
+                                        <p class="text-sm text-zinc-500">-</p>
+                                    </div>
+                                    <div>
+                                        <h3 class="text-sm font-medium text-zinc-700 mb-1">Videos (0)</h3>
+                                        <p class="text-sm text-zinc-500">-</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Amenities (Unit Specific) Section -->
+                            <div class="border border-zinc-200 rounded-lg p-6">
+                                <div class="flex items-start justify-between mb-4">
+                                    <h2 class="text-lg font-medium text-zinc-900">Amenities</h2>
+                                    <a href="create-listing.html" class="text-sm text-emerald-600 hover:text-emerald-700 font-medium">Edit Section</a>
+                                </div>
+                                <p class="text-sm text-zinc-500">Mud Room, Recreation Room, Vinyl Flooring</p>
+                            </div>
+
+                            <!-- Description Section -->
+                            <div class="border border-zinc-200 rounded-lg p-6">
+                                <div class="flex items-start justify-between mb-4">
+                                    <h2 class="text-lg font-medium text-zinc-900">Description</h2>
+                                    <a href="create-listing-step4.html" class="text-sm text-emerald-600 hover:text-emerald-700 font-medium">Edit Section</a>
+                                </div>
+                                <div class="space-y-3">
+                                    <div>
+                                        <p class="text-sm font-medium text-zinc-700 mb-1">Description</p>
+                                        <p class="text-sm text-zinc-600 leading-relaxed">So many great things about this property and so spacious, bright, open concept, modern, minimalistic.</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm font-medium text-zinc-700 mb-1">Rent Special</p>
+                                        <p class="text-sm text-zinc-500">-</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Contact Info Section -->
+                            <div class="border border-zinc-200 rounded-lg p-6">
+                                <div class="flex items-start justify-between mb-4">
+                                    <h2 class="text-lg font-medium text-zinc-900">Contact Info</h2>
+                                    <a href="create-listing-step5.html" class="text-sm text-emerald-600 hover:text-emerald-700 font-medium">Edit Section</a>
+                                </div>
+                                <div class="space-y-3 text-sm">
+                                    <div>
+                                        <p class="text-zinc-500 mb-1">Name</p>
+                                        <p class="text-zinc-900 font-medium">Rita Noriega</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-zinc-500 mb-1">Role</p>
+                                        <p class="text-zinc-900 font-medium">Owner</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-zinc-500 mb-1">Email address</p>
+                                        <p class="text-zinc-900 font-medium">zalocn@gmail.com</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-zinc-500 mb-1">Phone number</p>
+                                        <p class="text-zinc-900 font-medium">(828) 938-3892</p>
+                                    </div>
+                                    <div class="mt-4 p-3 bg-zinc-50 rounded-md border border-zinc-200">
+                                        <p class="text-xs text-zinc-600">
+                                            Your listing will display a forwarding phone number to hide your real phone number. 
+                                            <a href="#" class="text-blue-600 hover:text-blue-700 underline">Learn more</a>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Applications & Screening Section -->
+                            <div class="border border-zinc-200 rounded-lg p-6">
+                                <div class="flex items-start justify-between mb-4">
+                                    <div class="flex items-center gap-2">
+                                        <h2 class="text-lg font-medium text-zinc-900">Applications & Screening</h2>
+                                        <a href="#" class="text-sm text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1">
+                                            <iconify-icon icon="lucide:info" width="16"></iconify-icon>
+                                            Learn More
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="space-y-6">
+                                    <div>
+                                        <div class="mb-4">
+                                            <div class="flex items-center gap-2 mb-3">
+                                                <span class="text-sm font-medium text-blue-600">TransUnion</span>
+                                            </div>
+                                            <p class="text-sm text-zinc-600 leading-relaxed mb-4">
+                                                Enable an 'Apply Now' button to your listing and accept applications. Incoming applications include income and employment information, TransUnion® credit reports, evictions, and criminal records at no cost to you.
+                                            </p>
+                                            <div class="p-4 bg-zinc-50 rounded-md border border-zinc-200 mb-4">
+                                                <p class="text-xs text-zinc-600 leading-relaxed">
+                                                    By enabling applications, I certify applicable disclosures have been made to the applicant(s) and the application is in compliance with the obligations under ICRAA (see Cal. Civ. Code 1786.16(a)(4) and (b), as amended).
+                                                </p>
+                                            </div>
+                                            <label class="flex items-start gap-3 cursor-pointer">
+                                                <input type="checkbox" class="mt-0.5 w-4 h-4 rounded border-zinc-300 text-emerald-600 focus:ring-emerald-500">
+                                                <span class="text-sm text-zinc-700">Enable Applications</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="border-t border-zinc-200 pt-6">
+                                        <label class="flex items-start gap-3 cursor-pointer">
+                                            <input type="checkbox" class="mt-0.5 w-4 h-4 rounded border-zinc-300 text-emerald-600 focus:ring-emerald-500">
+                                            <span class="text-sm text-zinc-700">
+                                                By checking this box I agree as follows: I agree that I will provide accurate and 
+                                                <a href="#" class="text-blue-600 hover:text-blue-700 underline">non discriminatory</a> 
+                                                information and I will comply with the Apartments.com 
+                                                <a href="#" class="text-blue-600 hover:text-blue-700 underline">Terms and Conditions</a> 
+                                                and the 
+                                                <a href="#" class="text-blue-600 hover:text-blue-700 underline">Add a Property Terms of Service</a>.
+                                            </span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Navigation Buttons -->
+                <div class="mt-6 flex justify-between">
+                    <a href="create-listing-step5.html" class="px-6 py-2.5 rounded-md border border-emerald-600 text-emerald-600 font-medium text-sm hover:bg-emerald-50 transition-colors flex items-center gap-2">
+                        <iconify-icon icon="lucide:arrow-left" width="16"></iconify-icon>
+                        Previous
+                    </a>
+                    <button onclick="publishListing()" class="px-6 py-2.5 rounded-md bg-emerald-600 text-white font-medium text-sm hover:bg-emerald-700 transition-colors flex items-center gap-2">
+                        Publish Listing
+                        <iconify-icon icon="lucide:check" width="16"></iconify-icon>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Floating Help Button -->
+    <button class="fixed bottom-6 right-6 w-14 h-14 bg-blue-600 text-white rounded-full shadow-lg hover:bg-blue-700 transition-colors flex items-center justify-center z-30">
+        <iconify-icon icon="lucide:help-circle" width="24"></iconify-icon>
+    </button>
+
+    <script>
+        function toggleAccountDropdown() {
+            const submenu = document.querySelector('.account-submenu');
+            const chevron = document.querySelector('.account-chevron');
+            submenu.classList.toggle('hidden');
+            chevron.classList.toggle('rotate-180');
+        }
+
+        function publishListing() {
+            // Extract data from the review page DOM
+            const addressHeader = document.querySelector('p.text-sm.text-zinc-500.uppercase')?.textContent?.trim() || '214 VIA ROBINA, SAN CLEMENTE, CA 92672';
+            
+            // Extract unit details from Basics section
+            const basicsSection = document.querySelector('h2.text-lg.font-medium')?.closest('.border');
+            const unitNameSpan = basicsSection?.querySelector('span.bg-emerald-50');
+            const unitName = unitNameSpan?.textContent?.replace('FEATURED ', '').trim() || '14';
+            
+            const unitDetails = Array.from(basicsSection?.querySelectorAll('span.text-sm.text-zinc-700 strong') || []);
+            const beds = unitDetails[0]?.textContent || '2';
+            const baths = unitDetails[1]?.textContent || '1.5';
+            const size = unitDetails[2]?.textContent?.replace(/,/g, '') || '1000';
+            const monthlyRent = unitDetails[3]?.textContent?.replace(/[^\d]/g, '') || '1000';
+            const deposit = unitDetails[4]?.textContent?.replace(/[^\d]/g, '') || '1000';
+            const leaseLength = unitDetails[5]?.textContent || '12';
+            const dateAvailable = basicsSection?.querySelector('p.text-sm.text-zinc-500')?.textContent?.replace('Available ', '').trim() || '01/13/2026';
+
+            // Extract unit amenities
+            const amenitiesSections = Array.from(document.querySelectorAll('h2.text-lg.font-medium'));
+            const unitAmenitiesSection = amenitiesSections.find(h => h.textContent === 'Amenities' && !h.nextElementSibling?.textContent?.includes('Property Amenities'))?.closest('.border');
+            const unitAmenitiesText = unitAmenitiesSection?.querySelector('p.text-sm.text-zinc-500')?.textContent || '';
+            const unitAmenities = unitAmenitiesText ? unitAmenitiesText.split(',').map(a => a.trim()) : ['Mud Room', 'Recreation Room', 'Vinyl Flooring'];
+            
+            // Extract property amenities
+            const propertyAmenitiesSection = amenitiesSections.find(h => h.textContent === 'Amenities' && h.nextElementSibling?.textContent?.includes('Property Amenities'))?.closest('.border');
+            const propertyAmenitiesText = propertyAmenitiesSection?.textContent || '';
+            const propertyAmenities = propertyAmenitiesText.includes('Property Amenities:') 
+                ? propertyAmenitiesText.split('Property Amenities:')[1]?.split('Utilities:')[0]?.trim().split(',').map(a => a.trim()) || []
+                : ['Air Conditioning', 'Furnished'];
+            const utilities = propertyAmenitiesText.includes('Utilities:')
+                ? [propertyAmenitiesText.split('Utilities:')[1]?.split('Parking')[0]?.trim()].filter(Boolean) || []
+                : ['Gas'];
+            const parkingType = propertyAmenitiesText.includes('Parking type:')
+                ? propertyAmenitiesText.split('Parking type:')[1]?.split('Parking fee:')[0]?.trim() || ''
+                : 'Garage';
+            const parkingFee = propertyAmenitiesText.includes('Parking fee:')
+                ? propertyAmenitiesText.split('Parking fee:')[1]?.split('Laundry')[0]?.replace(/[^\d]/g, '') || ''
+                : '100';
+            const laundry = propertyAmenitiesText.includes('Laundry:')
+                ? [propertyAmenitiesText.split('Laundry:')[1]?.split('Pets')[0]?.trim()].filter(Boolean) || []
+                : ['Washer/Dryer Hookup'];
+            const petsAllowed = propertyAmenitiesText.includes('Pets allowed:')
+                ? propertyAmenitiesText.split('Pets allowed:')[1]?.trim() || ''
+                : 'Dogs';
+
+            // Extract media info
+            const mediaSection = amenitiesSections.find(h => h.textContent === 'Media')?.closest('.border');
+            const photosCount = mediaSection?.querySelector('h3')?.textContent?.match(/\((\d+)\)/)?.[1] || '1';
+            const virtualToursCount = Array.from(mediaSection?.querySelectorAll('h3') || [])[1]?.textContent?.match(/\((\d+)\)/)?.[1] || '0';
+            const videosCount = Array.from(mediaSection?.querySelectorAll('h3') || [])[2]?.textContent?.match(/\((\d+)\)/)?.[1] || '0';
+
+            // Extract description
+            const descriptionSection = amenitiesSections.find(h => h.textContent === 'Description')?.closest('.border');
+            const descriptionText = descriptionSection?.querySelector('p.text-sm.text-zinc-600')?.textContent?.trim() || 'So many great things about this property and so spacious, bright, open concept, modern, minimalistic.';
+            const rentSpecialText = Array.from(descriptionSection?.querySelectorAll('p.text-sm.text-zinc-500') || [])[1]?.textContent?.trim();
+            const rentSpecial = rentSpecialText === '-' ? null : rentSpecialText;
+
+            // Extract contact info
+            const contactSection = amenitiesSections.find(h => h.textContent === 'Contact Info')?.closest('.border');
+            const contactInfo = Array.from(contactSection?.querySelectorAll('p.text-zinc-900.font-medium') || []);
+            const contactName = contactInfo[0]?.textContent?.trim() || 'Rita Noriega';
+            const contactRole = contactInfo[1]?.textContent?.trim() || 'Owner';
+            const contactEmail = contactInfo[2]?.textContent?.trim() || 'zalocn@gmail.com';
+            const contactPhone = contactInfo[3]?.textContent?.trim() || '(828) 938-3892';
+            const nameParts = contactName.split(' ');
+
+            // Extract applications settings
+            const applicationsSection = amenitiesSections.find(h => h.textContent === 'Applications & Screening')?.closest('.border');
+            const checkboxes = applicationsSection?.querySelectorAll('input[type="checkbox"]') || [];
+            const applicationsEnabled = checkboxes[0]?.checked || false;
+            const agreementAccepted = checkboxes[1]?.checked || false;
+
+            // Build listing data object
+            const listingData = {
+                address: addressHeader,
+                unit: {
+                    name: unitName,
+                    dateAvailable: dateAvailable,
+                    beds: beds,
+                    baths: baths,
+                    size: size,
+                    monthlyRent: monthlyRent,
+                    deposit: deposit,
+                    leaseLength: leaseLength,
+                    amenities: unitAmenities,
+                    description: ''
+                },
+                building: {
+                    yearBuilt: ''
+                },
+                propertyAmenities: propertyAmenities,
+                laundry: laundry,
+                utilities: utilities,
+                parking: {
+                    type: parkingType,
+                    fee: parkingFee
+                },
+                pets: {
+                    allowed: petsAllowed !== '',
+                    type: petsAllowed
+                },
+                media: {
+                    photos: parseInt(photosCount),
+                    virtualTours: parseInt(virtualToursCount),
+                    videos: parseInt(videosCount)
+                },
+                description: {
+                    text: descriptionText,
+                    rentSpecial: rentSpecial
+                },
+                contact: {
+                    firstName: nameParts[0] || 'Rita',
+                    lastName: nameParts.slice(1).join(' ') || 'Noriega',
+                    hideName: false,
+                    role: contactRole.toLowerCase(),
+                    email: contactEmail,
+                    phone: contactPhone,
+                    contactPreference: ''
+                },
+                applications: {
+                    enabled: applicationsEnabled,
+                    agreementAccepted: agreementAccepted
+                },
+                publishedAt: new Date().toISOString(),
+                status: 'active'
+            };
+
+            // Save to localStorage
+            const listings = JSON.parse(localStorage.getItem('publishedListings') || '[]');
+            listingData.id = Date.now().toString();
+            listings.push(listingData);
+            localStorage.setItem('publishedListings', JSON.stringify(listings));
+
+            // Redirect to dashboard
+            window.location.href = 'dashboard.html';
+        }
+    </script>
+
+</body>
+</html>

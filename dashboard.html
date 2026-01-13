@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | Rental Manager</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/base.css">
+    <script src="js/listing-storage.js"></script>
+</head>
+<body class="bg-white text-zinc-900 antialiased selection:bg-emerald-100 selection:text-emerald-900 min-h-screen">
+
+    <!-- Top Header -->
+    <header class="fixed top-0 right-0 left-0 md:left-64 h-14 bg-white border-b border-zinc-100 z-40">
+        <div class="h-full flex items-center justify-between px-6">
+            <div class="md:hidden">
+                <button class="p-2 hover:bg-zinc-50 rounded-md transition-colors">
+                    <iconify-icon icon="lucide:menu" width="20" class="text-zinc-600"></iconify-icon>
+                </button>
+            </div>
+            <div class="flex items-center gap-4 ml-auto">
+                <a href="create-listing.html" class="text-sm font-medium bg-emerald-600 text-white px-4 py-2 rounded-md hover:bg-emerald-700 transition-colors flex items-center gap-2">
+                    <iconify-icon icon="lucide:plus" width="14"></iconify-icon>
+                    Add a Property
+                </a>
+                <div class="flex items-center gap-2 px-3 py-1.5 hover:bg-zinc-50 rounded-md cursor-pointer transition-colors">
+                    <div class="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700 text-xs font-medium">R</div>
+                    <span class="text-sm font-medium text-zinc-900 hidden sm:block">Rita</span>
+                    <iconify-icon icon="lucide:chevron-down" width="16" class="text-zinc-400"></iconify-icon>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Sidebar Navigation -->
+    <aside class="fixed top-0 left-0 bottom-0 w-64 bg-white border-r border-zinc-100 z-50 overflow-y-auto hidden md:block">
+        <div class="p-6 border-b border-zinc-100">
+            <a href="index.html" class="flex items-center gap-2">
+                <div class="w-6 h-6 bg-emerald-600 rounded-md flex items-center justify-center text-white">
+                    <iconify-icon icon="lucide:building-2" width="16" stroke-width="1.5"></iconify-icon>
+                </div>
+                <span class="text-sm font-semibold tracking-tight">RENTAL MANAGER</span>
+            </a>
+        </div>
+        <nav class="p-4 space-y-1">
+            <a href="dashboard.html" class="flex items-center gap-3 px-3 py-2 bg-emerald-50 border border-emerald-100 rounded-md text-emerald-700">
+                <iconify-icon icon="lucide:layout-dashboard" width="18" stroke-width="1.5"></iconify-icon>
+                <span class="text-sm font-medium">Dashboard</span>
+            </a>
+            <a href="properties.html" class="flex items-center gap-3 px-3 py-2 text-zinc-600 hover:bg-zinc-50 rounded-md transition-colors">
+                <iconify-icon icon="lucide:home" width="18" stroke-width="1.5"></iconify-icon>
+                <span class="text-sm font-medium">Properties</span>
+            </a>
+            <a href="applications.html" class="flex items-center gap-3 px-3 py-2 text-zinc-600 hover:bg-zinc-50 rounded-md transition-colors">
+                <iconify-icon icon="lucide:users" width="18" stroke-width="1.5"></iconify-icon>
+                <span class="text-sm font-medium">Applications</span>
+            </a>
+            <a href="payments.html" class="flex items-center gap-3 px-3 py-2 text-zinc-600 hover:bg-zinc-50 rounded-md transition-colors">
+                <iconify-icon icon="lucide:wallet" width="18" stroke-width="1.5"></iconify-icon>
+                <span class="text-sm font-medium">Payments</span>
+            </a>
+            <a href="leases.html" class="flex items-center gap-3 px-3 py-2 text-zinc-600 hover:bg-zinc-50 rounded-md transition-colors">
+                <iconify-icon icon="lucide:file-text" width="18" stroke-width="1.5"></iconify-icon>
+                <span class="text-sm font-medium">Residents & Leases</span>
+            </a>
+            <a href="reports.html" class="flex items-center gap-3 px-3 py-2 text-zinc-600 hover:bg-zinc-50 rounded-md transition-colors">
+                <iconify-icon icon="lucide:bar-chart-3" width="18" stroke-width="1.5"></iconify-icon>
+                <span class="text-sm font-medium">Reports</span>
+            </a>
+            <a href="maintenance.html" class="flex items-center gap-3 px-3 py-2 text-zinc-600 hover:bg-zinc-50 rounded-md transition-colors">
+                <iconify-icon icon="lucide:wrench" width="18" stroke-width="1.5"></iconify-icon>
+                <span class="text-sm font-medium">Maintenance</span>
+            </a>
+            <a href="expenses.html" class="flex items-center gap-3 px-3 py-2 text-zinc-600 hover:bg-zinc-50 rounded-md transition-colors">
+                <iconify-icon icon="lucide:receipt" width="18" stroke-width="1.5"></iconify-icon>
+                <span class="text-sm font-medium">Expenses</span>
+            </a>
+            <div class="pt-4 mt-4 border-t border-zinc-100 space-y-1">
+                <a href="messages.html" class="flex items-center gap-3 px-3 py-2 text-zinc-600 hover:bg-zinc-50 rounded-md transition-colors">
+                    <iconify-icon icon="lucide:mail" width="18" stroke-width="1.5"></iconify-icon>
+                    <span class="text-sm font-medium">Messages</span>
+                </a>
+                <a href="help.html" class="flex items-center gap-3 px-3 py-2 text-zinc-600 hover:bg-zinc-50 rounded-md transition-colors">
+                    <iconify-icon icon="lucide:help-circle" width="18" stroke-width="1.5"></iconify-icon>
+                    <span class="text-sm font-medium">Help</span>
+                </a>
+                <div class="account-dropdown">
+                    <button class="w-full flex items-center gap-3 px-3 py-2 text-zinc-600 hover:bg-zinc-50 rounded-md transition-colors" onclick="toggleAccountDropdown()">
+                        <iconify-icon icon="lucide:settings" width="18" stroke-width="1.5"></iconify-icon>
+                        <span class="text-sm font-medium">Account</span>
+                        <iconify-icon icon="lucide:chevron-down" width="14" class="text-zinc-400 ml-auto account-chevron transition-transform"></iconify-icon>
+                    </button>
+                    <div class="account-submenu hidden mt-1 ml-4 space-y-1">
+                        <a href="my-account.html" class="flex items-center gap-3 px-3 py-2 text-zinc-600 hover:bg-zinc-50 rounded-md transition-colors text-sm">
+                            My Account
+                        </a>
+                        <a href="banks-cards.html" class="flex items-center gap-3 px-3 py-2 text-zinc-600 hover:bg-zinc-50 rounded-md transition-colors text-sm">
+                            Banks & Cards
+                        </a>
+                        <a href="billing-history.html" class="flex items-center gap-3 px-3 py-2 bg-emerald-50 border border-emerald-100 rounded-md text-emerald-700 text-sm">
+                            <span class="flex h-2 w-2 rounded-full bg-emerald-500"></span>
+                            Billing History
+                        </a>
+                    </div>
+                </div>
+                <a href="feedback.html" class="flex items-center gap-3 px-3 py-2 text-zinc-600 hover:bg-zinc-50 rounded-md transition-colors">
+                    <iconify-icon icon="lucide:message-square" width="18" stroke-width="1.5"></iconify-icon>
+                    <span class="text-sm font-medium">Provide Feedback</span>
+                </a>
+            </div>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="md:ml-64 pt-14 min-h-screen">
+        <div class="p-6">
+            <!-- Page Header -->
+            <div class="mb-8">
+                <h1 class="text-3xl font-medium tracking-tight text-zinc-900 mb-2">Dashboard</h1>
+                <p class="text-zinc-500">Welcome back, here's what's happening with your properties.</p>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                <div class="p-4 rounded-lg border border-zinc-100 bg-zinc-50/50">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xs font-medium text-zinc-500">Total Revenue</span>
+                        <iconify-icon icon="lucide:trending-up" class="text-emerald-500"></iconify-icon>
+                    </div>
+                    <div id="totalRevenue" class="text-2xl font-medium tracking-tight">$24,500</div>
+                    <div class="text-xs text-emerald-600 mt-1 flex items-center gap-1">
+                        <iconify-icon icon="lucide:arrow-up-right" width="12"></iconify-icon>
+                        +12% this month
+                    </div>
+                </div>
+                <div class="p-4 rounded-lg border border-zinc-100 bg-zinc-50/50">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xs font-medium text-zinc-500">Active Properties</span>
+                        <iconify-icon icon="lucide:home" class="text-zinc-400"></iconify-icon>
+                    </div>
+                    <div id="activePropertiesCount" class="text-2xl font-medium tracking-tight">3</div>
+                    <div class="text-xs text-zinc-400 mt-1">2 units vacant</div>
+                </div>
+                <div class="p-4 rounded-lg border border-zinc-100 bg-zinc-50/50">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xs font-medium text-zinc-500">Pending Applications</span>
+                        <iconify-icon icon="lucide:user-plus" class="text-blue-500"></iconify-icon>
+                    </div>
+                    <div class="text-2xl font-medium tracking-tight">8</div>
+                    <div class="text-xs text-blue-600 mt-1">Action required</div>
+                </div>
+                <div class="p-4 rounded-lg border border-zinc-100 bg-zinc-50/50">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xs font-medium text-zinc-500">Occupancy Rate</span>
+                        <iconify-icon icon="lucide:percent" class="text-emerald-500"></iconify-icon>
+                    </div>
+                    <div class="text-2xl font-medium tracking-tight">87%</div>
+                    <div class="text-xs text-zinc-400 mt-1">Above average</div>
+                </div>
+            </div>
+
+            <!-- Recent Activity Section -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                <!-- Recent Applications -->
+                <div class="border border-zinc-100 rounded-lg overflow-hidden bg-white">
+                    <div class="bg-zinc-50/50 px-4 py-3 border-b border-zinc-100 flex justify-between items-center">
+                        <span class="text-sm font-medium text-zinc-900">Recent Applications</span>
+                        <a href="applications.html" class="text-xs text-emerald-600 hover:text-emerald-700 font-medium">View all</a>
+                    </div>
+                    <div class="divide-y divide-zinc-50">
+                        <div class="px-4 py-3 flex items-center justify-between hover:bg-zinc-50 transition-colors cursor-pointer">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700 text-sm font-medium">JD</div>
+                                <div>
+                                    <div class="text-sm font-medium text-zinc-900">John Doe</div>
+                                    <div class="text-xs text-zinc-500">Unit 4B • Applied 2h ago</div>
+                                </div>
+                            </div>
+                            <span class="px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 text-xs font-medium border border-blue-100">Review</span>
+                        </div>
+                        <div class="px-4 py-3 flex items-center justify-between hover:bg-zinc-50 transition-colors cursor-pointer">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-full bg-zinc-100 flex items-center justify-center text-zinc-700 text-sm font-medium">AS</div>
+                                <div>
+                                    <div class="text-sm font-medium text-zinc-900">Sarah Smith</div>
+                                    <div class="text-xs text-zinc-500">Unit 2A • Applied 1d ago</div>
+                                </div>
+                            </div>
+                            <span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-xs font-medium border border-emerald-100">Approved</span>
+                        </div>
+                        <div class="px-4 py-3 flex items-center justify-between hover:bg-zinc-50 transition-colors cursor-pointer">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 text-sm font-medium">MJ</div>
+                                <div>
+                                    <div class="text-sm font-medium text-zinc-900">Michael Johnson</div>
+                                    <div class="text-xs text-zinc-500">Unit 1C • Applied 3d ago</div>
+                                </div>
+                            </div>
+                            <span class="px-2 py-0.5 rounded-full bg-yellow-50 text-yellow-700 text-xs font-medium border border-yellow-100">Pending</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Upcoming Payments -->
+                <div class="border border-zinc-100 rounded-lg overflow-hidden bg-white">
+                    <div class="bg-zinc-50/50 px-4 py-3 border-b border-zinc-100 flex justify-between items-center">
+                        <span class="text-sm font-medium text-zinc-900">Upcoming Payments</span>
+                        <a href="payments.html" class="text-xs text-emerald-600 hover:text-emerald-700 font-medium">View all</a>
+                    </div>
+                    <div class="divide-y divide-zinc-50">
+                        <div class="px-4 py-3 flex items-center justify-between hover:bg-zinc-50 transition-colors">
+                            <div>
+                                <div class="text-sm font-medium text-zinc-900">214 Via Robina</div>
+                                <div class="text-xs text-zinc-500">Unit 4B • Due in 3 days</div>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-sm font-medium text-zinc-900">$2,400</div>
+                                <div class="text-xs text-emerald-600">On track</div>
+                            </div>
+                        </div>
+                        <div class="px-4 py-3 flex items-center justify-between hover:bg-zinc-50 transition-colors">
+                            <div>
+                                <div class="text-sm font-medium text-zinc-900">123 Main Street</div>
+                                <div class="text-xs text-zinc-500">Unit 2A • Due in 5 days</div>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-sm font-medium text-zinc-900">$1,800</div>
+                                <div class="text-xs text-emerald-600">On track</div>
+                            </div>
+                        </div>
+                        <div class="px-4 py-3 flex items-center justify-between hover:bg-zinc-50 transition-colors">
+                            <div>
+                                <div class="text-sm font-medium text-zinc-900">456 Oak Avenue</div>
+                                <div class="text-xs text-zinc-500">Unit 1C • Due in 7 days</div>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-sm font-medium text-zinc-900">$2,100</div>
+                                <div class="text-xs text-yellow-600">Reminder sent</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        function toggleAccountDropdown() {
+            const submenu = document.querySelector('.account-submenu');
+            const chevron = document.querySelector('.account-chevron');
+            submenu.classList.toggle('hidden');
+            chevron.classList.toggle('rotate-180');
+        }
+
+        // Update active properties count
+        function updateDashboardStats() {
+            const listings = JSON.parse(localStorage.getItem('publishedListings') || '[]');
+            const activePropertiesCount = document.getElementById('activePropertiesCount');
+            const totalRevenueEl = document.getElementById('totalRevenue');
+
+            // Update active properties count
+            if (activePropertiesCount) {
+                const activeListings = listings.filter(l => l.status === 'active').length;
+                const defaultActiveCount = 2; // Default properties shown
+                activePropertiesCount.textContent = (activeListings + defaultActiveCount).toString();
+            }
+
+            // Update total revenue
+            if (totalRevenueEl) {
+                const defaultRevenue = 24500; // Default revenue from existing properties
+                const listingsRevenue = listings.reduce((sum, listing) => {
+                    const rent = parseInt(listing.unit?.monthlyRent || 0);
+                    return sum + rent;
+                }, 0);
+                const totalRevenue = defaultRevenue + listingsRevenue;
+                totalRevenueEl.textContent = `$${totalRevenue.toLocaleString()}`;
+            }
+        }
+
+        // Load stats when page loads
+        document.addEventListener('DOMContentLoaded', updateDashboardStats);
+    </script>
+
+</body>
+</html>
