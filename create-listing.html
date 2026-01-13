@@ -201,14 +201,14 @@
                                             # / Name
                                             <iconify-icon icon="lucide:info" width="14" class="text-zinc-400 inline ml-1"></iconify-icon>
                                         </label>
-                                        <input type="text" class="w-full px-4 py-2 rounded-md border border-zinc-200 bg-white text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent">
+                                        <input type="text" id="unitName" class="w-full px-4 py-2 rounded-md border border-zinc-200 bg-white text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent" oninput="saveUnitData()">
                                     </div>
 
                                     <!-- Date Available -->
                                     <div>
                                         <label class="block text-sm font-medium text-zinc-900 mb-2">Date Available</label>
                                         <div class="relative">
-                                            <input type="date" class="w-full px-4 py-2 rounded-md border border-zinc-200 bg-white text-zinc-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent">
+                                            <input type="date" id="dateAvailable" class="w-full px-4 py-2 rounded-md border border-zinc-200 bg-white text-zinc-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent" onchange="saveUnitData()">
                                             <iconify-icon icon="lucide:calendar" width="18" class="absolute right-3 top-2.5 text-zinc-400 pointer-events-none"></iconify-icon>
                                         </div>
                                     </div>
@@ -216,7 +216,7 @@
                                     <!-- Beds -->
                                     <div>
                                         <label class="block text-sm font-medium text-zinc-900 mb-2">Beds</label>
-                                        <select class="w-full px-4 py-2 rounded-md border border-zinc-200 bg-white text-zinc-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent">
+                                        <select id="beds" class="w-full px-4 py-2 rounded-md border border-zinc-200 bg-white text-zinc-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent" onchange="saveUnitData()">
                                             <option>Studio</option>
                                             <option>1</option>
                                             <option>2</option>
@@ -228,7 +228,7 @@
                                     <!-- Baths -->
                                     <div>
                                         <label class="block text-sm font-medium text-zinc-900 mb-2">Baths</label>
-                                        <select class="w-full px-4 py-2 rounded-md border border-zinc-200 bg-white text-zinc-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent">
+                                        <select id="baths" class="w-full px-4 py-2 rounded-md border border-zinc-200 bg-white text-zinc-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent" onchange="saveUnitData()">
                                             <option>Select</option>
                                             <option>1</option>
                                             <option>1.5</option>
@@ -242,7 +242,7 @@
                                     <div>
                                         <label class="block text-sm font-medium text-zinc-900 mb-2">Size</label>
                                         <div class="flex">
-                                            <input type="number" placeholder="0" class="flex-1 px-4 py-2 rounded-l-md border border-zinc-200 bg-white text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent">
+                                            <input type="number" id="size" placeholder="0" class="flex-1 px-4 py-2 rounded-l-md border border-zinc-200 bg-white text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent" oninput="saveUnitData()">
                                             <span class="px-4 py-2 bg-zinc-50 border border-l-0 border-zinc-200 rounded-r-md text-sm text-zinc-600 flex items-center">Sq Ft.</span>
                                         </div>
                                     </div>
@@ -252,7 +252,7 @@
                                         <label class="block text-sm font-medium text-zinc-900 mb-2">Monthly Rent</label>
                                         <div class="relative">
                                             <span class="absolute left-3 top-2.5 text-zinc-500">$</span>
-                                            <input type="number" placeholder="0" class="w-full pl-7 pr-4 py-2 rounded-md border border-zinc-200 bg-white text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent">
+                                            <input type="number" id="monthlyRent" placeholder="0" class="w-full pl-7 pr-4 py-2 rounded-md border border-zinc-200 bg-white text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent" oninput="saveUnitData()">
                                         </div>
                                     </div>
 
@@ -261,7 +261,7 @@
                                         <label class="block text-sm font-medium text-zinc-900 mb-2">Deposit</label>
                                         <div class="relative">
                                             <span class="absolute left-3 top-2.5 text-zinc-500">$</span>
-                                            <input type="number" placeholder="0" class="w-full pl-7 pr-4 py-2 rounded-md border border-zinc-200 bg-white text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent">
+                                            <input type="number" id="deposit" placeholder="0" class="w-full pl-7 pr-4 py-2 rounded-md border border-zinc-200 bg-white text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent" oninput="saveUnitData()">
                                         </div>
                                     </div>
 
@@ -269,7 +269,7 @@
                                     <div>
                                         <label class="block text-sm font-medium text-zinc-900 mb-2">Lease Length</label>
                                         <div class="flex">
-                                            <input type="number" value="12" class="flex-1 px-4 py-2 rounded-l-md border border-zinc-200 bg-white text-zinc-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent">
+                                            <input type="number" id="leaseLength" value="12" class="flex-1 px-4 py-2 rounded-l-md border border-zinc-200 bg-white text-zinc-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent" oninput="saveUnitData()">
                                             <span class="px-4 py-2 bg-zinc-50 border border-l-0 border-zinc-200 rounded-r-md text-sm text-zinc-600 flex items-center">Months</span>
                                         </div>
                                     </div>
@@ -307,7 +307,7 @@
                                     <label class="block text-sm font-medium text-zinc-900 mb-2">
                                         Year Built <span class="text-zinc-400 font-normal">(Optional)</span>
                                     </label>
-                                    <input type="number" placeholder="e.g., 2020" class="w-full md:w-48 px-4 py-2 rounded-md border border-zinc-200 bg-white text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent">
+                                    <input type="number" id="yearBuilt" placeholder="e.g., 2020" class="w-full md:w-48 px-4 py-2 rounded-md border border-zinc-200 bg-white text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent" oninput="saveUnitData()">
                                 </div>
                             </div>
                         </div>
@@ -1055,6 +1055,67 @@
         document.getElementById('unitDescriptionModal').addEventListener('click', function(e) {
             if (e.target === this) {
                 closeUnitDescriptionModal();
+            }
+        });
+
+        // Real-time save function - saves data as user types
+        function saveUnitData() {
+            const unitName = document.getElementById('unitName')?.value || '';
+            const dateAvailable = document.getElementById('dateAvailable')?.value || '';
+            const beds = document.getElementById('beds')?.value || '';
+            const baths = document.getElementById('baths')?.value || '';
+            const size = document.getElementById('size')?.value || '';
+            const monthlyRent = document.getElementById('monthlyRent')?.value || '';
+            const deposit = document.getElementById('deposit')?.value || '';
+            const leaseLength = document.getElementById('leaseLength')?.value || '12';
+            const yearBuilt = document.getElementById('yearBuilt')?.value || '';
+
+            // Get existing saved data to preserve amenities, description, and photos
+            const current = ListingStorage.getCurrentListing() || {};
+
+            const step1Data = {
+                address: '214 VIA ROBINA, SAN CLEMENTE, CA 92672',
+                unit: {
+                    name: unitName,
+                    dateAvailable: dateAvailable,
+                    beds: beds,
+                    baths: baths,
+                    size: size,
+                    monthlyRent: monthlyRent,
+                    deposit: deposit,
+                    leaseLength: leaseLength,
+                    amenities: current.unit?.amenities || [],
+                    description: current.unit?.description || '',
+                    photos: current.unit?.photos || []
+                },
+                building: {
+                    yearBuilt: yearBuilt
+                },
+                media: {
+                    photos: current.media?.photos || uploadedPhotos.length || 0,
+                    virtualTours: current.media?.virtualTours || 0,
+                    videos: current.media?.videos || 0
+                }
+            };
+
+            // Merge with existing data to preserve all fields
+            const updated = { ...current, ...step1Data };
+            ListingStorage.saveCurrentListing(updated);
+        }
+
+        // Load saved data when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            const saved = ListingStorage.getCurrentListing();
+            if (saved?.unit) {
+                if (saved.unit.name) document.getElementById('unitName').value = saved.unit.name;
+                if (saved.unit.dateAvailable) document.getElementById('dateAvailable').value = saved.unit.dateAvailable;
+                if (saved.unit.beds) document.getElementById('beds').value = saved.unit.beds;
+                if (saved.unit.baths) document.getElementById('baths').value = saved.unit.baths;
+                if (saved.unit.size) document.getElementById('size').value = saved.unit.size;
+                if (saved.unit.monthlyRent) document.getElementById('monthlyRent').value = saved.unit.monthlyRent;
+                if (saved.unit.deposit) document.getElementById('deposit').value = saved.unit.deposit;
+                if (saved.unit.leaseLength) document.getElementById('leaseLength').value = saved.unit.leaseLength;
+                if (saved.building?.yearBuilt) document.getElementById('yearBuilt').value = saved.building.yearBuilt;
             }
         });
 
