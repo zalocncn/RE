@@ -3,12 +3,192 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create a Listing - Step 6: Review | Rental Manager</title>
+    <title>Create Rental - Step 6: Review | Rental Manager</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/base.css">
     <script src="js/listing-storage.js"></script>
+    <script>
+        // Load and display saved data from steps 1-5 when page loads
+        function loadReviewData() {
+            const savedData = ListingStorage.getCurrentListing();
+            if (!savedData) {
+                console.log('No saved data found, using defaults');
+                return;
+            }
+
+            // Update address header
+            if (savedData.address) {
+                const addressHeader = document.querySelector('p.text-sm.text-zinc-500.uppercase');
+                if (addressHeader) {
+                    addressHeader.textContent = savedData.address.toUpperCase();
+                }
+            }
+
+            // Update Basics section
+            if (savedData.unit) {
+                const basicsSection = document.querySelector('h2.text-lg.font-medium')?.closest('.border');
+                if (basicsSection) {
+                    // Update unit name badge
+                    const unitBadge = basicsSection.querySelector('span.bg-emerald-50');
+                    if (unitBadge && savedData.unit.name) {
+                        unitBadge.textContent = `FEATURED ${savedData.unit.name}`;
+                    } else if (unitBadge && !savedData.unit.name) {
+                        unitBadge.textContent = 'FEATURED';
+                    }
+
+                    // Update unit details
+                    const detailsContainer = basicsSection.querySelector('.flex.flex-wrap');
+                    if (detailsContainer && savedData.unit) {
+                        const unit = savedData.unit;
+                        detailsContainer.innerHTML = `
+                            ${unit.beds ? `<span><strong>${unit.beds}</strong> Beds</span>` : ''}
+                            ${unit.baths ? `<span><strong>${unit.baths}</strong> Baths</span>` : ''}
+                            ${unit.size ? `<span><strong>${parseInt(unit.size).toLocaleString()}</strong> Sq Ft.</span>` : ''}
+                            ${unit.monthlyRent ? `<span><strong>$${parseInt(unit.monthlyRent).toLocaleString()}</strong> Monthly Rent</span>` : ''}
+                            ${unit.deposit ? `<span><strong>$${parseInt(unit.deposit).toLocaleString()}</strong> Deposit</span>` : ''}
+                            ${unit.leaseLength ? `<span><strong>${unit.leaseLength}</strong> Month Lease</span>` : ''}
+                        `;
+                    }
+
+                    // Update availability date
+                    const availabilityText = basicsSection.querySelector('p.text-sm.text-zinc-500');
+                    if (availabilityText && savedData.unit.dateAvailable) {
+                        const date = new Date(savedData.unit.dateAvailable);
+                        if (!isNaN(date.getTime())) {
+                            const formattedDate = date.toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' });
+                            availabilityText.textContent = `Available ${formattedDate}`;
+                        }
+                    }
+                    
+                    // Add year built if available
+                    if (savedData.building?.yearBuilt) {
+                        const yearBuiltText = basicsSection.querySelector('p.text-sm.text-zinc-500');
+                        if (yearBuiltText && savedData.building.yearBuilt) {
+                            const existingText = yearBuiltText.textContent;
+                            yearBuiltText.innerHTML = `${existingText}<br><span class="text-sm text-zinc-500">Year Built: ${savedData.building.yearBuilt}</span>`;
+                        }
+                    }
+                }
+            }
+
+            // Update Amenities section
+            if (savedData.unit?.amenities && savedData.unit.amenities.length > 0) {
+                const amenitiesSection = document.querySelectorAll('h2.text-lg.font-medium');
+                const unitAmenitiesSection = Array.from(amenitiesSection).find(h => 
+                    h.textContent === 'Amenities' && !h.nextElementSibling?.textContent?.includes('Property Amenities')
+                )?.closest('.border');
+                if (unitAmenitiesSection) {
+                    const amenitiesText = unitAmenitiesSection.querySelector('p.text-sm.text-zinc-500');
+                    if (amenitiesText && Array.isArray(savedData.unit.amenities)) {
+                        amenitiesText.textContent = savedData.unit.amenities.join(', ');
+                    }
+                }
+            }
+            
+            // Add unit description if available
+            if (savedData.unit?.description) {
+                const amenitiesSection = document.querySelectorAll('h2.text-lg.font-medium');
+                const unitAmenitiesSection = Array.from(amenitiesSection).find(h => 
+                    h.textContent === 'Amenities' && !h.nextElementSibling?.textContent?.includes('Property Amenities')
+                )?.closest('.border');
+                if (unitAmenitiesSection && savedData.unit.description) {
+                    // Add description below amenities
+                    const existingContent = unitAmenitiesSection.innerHTML;
+                    const descriptionHtml = `
+                        <div class="mt-4 pt-4 border-t border-zinc-200">
+                            <p class="text-sm font-medium text-zinc-700 mb-2">Unit Description</p>
+                            <p class="text-sm text-zinc-600 leading-relaxed">${savedData.unit.description}</p>
+                        </div>
+                    `;
+                    unitAmenitiesSection.innerHTML = existingContent + descriptionHtml;
+                }
+            }
+
+            // Update Property Amenities section (if exists)
+            if (savedData.propertyAmenities || savedData.utilities || savedData.parking || savedData.laundry || savedData.pets) {
+                // This would need to be added to the review page HTML structure
+            }
+
+            // Update Media section
+            if (savedData.media || savedData.unit?.photos) {
+                const mediaSection = Array.from(document.querySelectorAll('h2.text-lg.font-medium')).find(h => 
+                    h.textContent === 'Media'
+                )?.closest('.border');
+                if (mediaSection) {
+                    const photosHeading = mediaSection.querySelector('h3');
+                    const photosCount = savedData.media?.photos || savedData.unit?.photos?.length || 0;
+                    if (photosHeading && photosCount !== undefined) {
+                        photosHeading.textContent = `Photos (${photosCount})`;
+                    }
+                    
+                    // Display unit photos if available
+                    if (savedData.unit?.photos && savedData.unit.photos.length > 0) {
+                        const photosContainer = mediaSection.querySelector('.w-full.h-48.bg-zinc-100');
+                        if (photosContainer) {
+                            // Show first photo
+                            const firstPhoto = savedData.unit.photos[0];
+                            if (firstPhoto.dataUrl) {
+                                photosContainer.innerHTML = `<img src="${firstPhoto.dataUrl}" alt="Unit photo" class="w-full h-full object-cover">`;
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Update Description section
+            if (savedData.description) {
+                const descriptionSection = Array.from(document.querySelectorAll('h2.text-lg.font-medium')).find(h => 
+                    h.textContent === 'Description'
+                )?.closest('.border');
+                if (descriptionSection) {
+                    const descText = descriptionSection.querySelector('p.text-sm.text-zinc-600');
+                    if (descText && savedData.description.text) {
+                        descText.textContent = savedData.description.text;
+                    }
+                    const rentSpecialText = descriptionSection.querySelectorAll('p.text-sm.text-zinc-500')[1];
+                    if (rentSpecialText) {
+                        rentSpecialText.textContent = savedData.description.rentSpecial || '-';
+                    }
+                }
+            }
+
+            // Update Contact Info section
+            if (savedData.contact) {
+                const contactSection = Array.from(document.querySelectorAll('h2.text-lg.font-medium')).find(h => 
+                    h.textContent === 'Contact Info'
+                )?.closest('.border');
+                if (contactSection) {
+                    const contactInfo = contactSection.querySelectorAll('p.text-zinc-900.font-medium');
+                    if (contactInfo.length >= 4 && savedData.contact) {
+                        const name = `${savedData.contact.firstName || ''} ${savedData.contact.lastName || ''}`.trim();
+                        if (name) contactInfo[0].textContent = name;
+                        if (savedData.contact.role) contactInfo[1].textContent = savedData.contact.role.charAt(0).toUpperCase() + savedData.contact.role.slice(1);
+                        if (savedData.contact.email) contactInfo[2].textContent = savedData.contact.email;
+                        if (savedData.contact.phone) contactInfo[3].textContent = savedData.contact.phone;
+                    }
+                }
+            }
+
+            // Update Applications section checkboxes
+            if (savedData.applications) {
+                const applicationsSection = Array.from(document.querySelectorAll('h2.text-lg.font-medium')).find(h => 
+                    h.textContent === 'Applications & Screening'
+                )?.closest('.border');
+                if (applicationsSection) {
+                    const checkboxes = applicationsSection.querySelectorAll('input[type="checkbox"]');
+                    if (checkboxes.length >= 2) {
+                        checkboxes[0].checked = savedData.applications.enabled || false;
+                        checkboxes[1].checked = savedData.applications.agreementAccepted || false;
+                    }
+                }
+            }
+        }
+
+        // Load data when page loads
+        document.addEventListener('DOMContentLoaded', loadReviewData);
+    </script>
 </head>
 <body class="bg-white text-zinc-900 antialiased selection:bg-emerald-100 selection:text-emerald-900 min-h-screen">
 
@@ -121,7 +301,7 @@
                 <!-- Main Form Card -->
                 <div class="bg-white rounded-lg border border-zinc-200 shadow-sm p-8">
                     <div class="mb-8">
-                        <h1 class="text-2xl font-medium tracking-tight text-zinc-900 mb-2">Create a Listing</h1>
+                        <h1 class="text-2xl font-medium tracking-tight text-zinc-900 mb-2">Create Rental</h1>
                         <div class="flex items-center gap-2 text-sm text-zinc-500">
                             <span class="font-medium">Step 6 of 6: Review</span>
                             <span>•</span>
@@ -324,7 +504,7 @@
                         Previous
                     </a>
                     <button onclick="publishListing()" class="px-6 py-2.5 rounded-md bg-emerald-600 text-white font-medium text-sm hover:bg-emerald-700 transition-colors flex items-center gap-2">
-                        Publish Listing
+                        Create Rental
                         <iconify-icon icon="lucide:check" width="16"></iconify-icon>
                     </button>
                 </div>
@@ -346,8 +526,16 @@
         }
 
         function publishListing() {
-            // Extract data from the review page DOM
-            const addressHeader = document.querySelector('p.text-sm.text-zinc-500.uppercase')?.textContent?.trim() || '214 VIA ROBINA, SAN CLEMENTE, CA 92672';
+            // First, try to get saved data from localStorage (from steps 1-5)
+            let listingData = ListingStorage.getCurrentListing();
+            
+            // If no saved data exists, extract from the review page DOM as fallback
+            if (!listingData || Object.keys(listingData).length === 0) {
+                console.log('No saved data found, extracting from DOM');
+                listingData = {};
+                
+                // Extract data from the review page DOM
+                const addressHeader = document.querySelector('p.text-sm.text-zinc-500.uppercase')?.textContent?.trim() || '214 VIA ROBINA, SAN CLEMENTE, CA 92672';
             
             // Extract unit details from Basics section
             const basicsSection = document.querySelector('h2.text-lg.font-medium')?.closest('.border');
@@ -418,9 +606,9 @@
             const applicationsEnabled = checkboxes[0]?.checked || false;
             const agreementAccepted = checkboxes[1]?.checked || false;
 
-            // Build listing data object
-            const listingData = {
-                address: addressHeader,
+                // Build listing data object from DOM
+                listingData = {
+                    address: addressHeader,
                 unit: {
                     name: unitName,
                     dateAvailable: dateAvailable,
@@ -468,19 +656,48 @@
                 applications: {
                     enabled: applicationsEnabled,
                     agreementAccepted: agreementAccepted
-                },
-                publishedAt: new Date().toISOString(),
-                status: 'active'
-            };
+                };
+            } else {
+                // Use saved data, but ensure all fields are present
+                // Merge with any data extracted from review page checkboxes
+                const applicationsSection = Array.from(document.querySelectorAll('h2.text-lg.font-medium')).find(h => 
+                    h.textContent === 'Applications & Screening'
+                )?.closest('.border');
+                if (applicationsSection) {
+                    const checkboxes = applicationsSection.querySelectorAll('input[type="checkbox"]');
+                    if (checkboxes.length >= 2) {
+                        listingData.applications = {
+                            enabled: checkboxes[0].checked || false,
+                            agreementAccepted: checkboxes[1].checked || false
+                        };
+                    }
+                }
+            }
 
-            // Save to localStorage
-            const listings = JSON.parse(localStorage.getItem('publishedListings') || '[]');
-            listingData.id = Date.now().toString();
-            listings.push(listingData);
-            localStorage.setItem('publishedListings', JSON.stringify(listings));
+            // Ensure required fields are set
+            if (!listingData.address) {
+                listingData.address = document.querySelector('p.text-sm.text-zinc-500.uppercase')?.textContent?.trim() || '214 VIA ROBINA, SAN CLEMENTE, CA 92672';
+            }
+            if (!listingData.publishedAt) {
+                listingData.publishedAt = new Date().toISOString();
+            }
+            if (!listingData.status) {
+                listingData.status = 'active';
+            }
 
-            // Redirect to dashboard
-            window.location.href = 'dashboard.html';
+            // Save to localStorage using ListingStorage utility for consistency
+            // ListingStorage.saveListing() will automatically add id, publishedAt, and status
+            const savedListing = ListingStorage.saveListing(listingData);
+            
+            // Clear any temporary listing data
+            ListingStorage.clearCurrentListing();
+            
+            // Show success message
+            console.log('Rental created successfully!', savedListing);
+            
+            // Redirect to properties page to see the new rental
+            // The properties page will automatically load and display the new rental
+            window.location.href = 'properties.html';
         }
     </script>
 

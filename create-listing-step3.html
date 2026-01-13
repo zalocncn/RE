@@ -3,11 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create a Listing - Step 3: Media | Rental Manager</title>
+    <title>Create Rental - Step 3: Media | Rental Manager</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/base.css">
+    <script src="js/listing-storage.js"></script>
 </head>
 <body class="bg-white text-zinc-900 antialiased selection:bg-emerald-100 selection:text-emerald-900 min-h-screen">
 
@@ -120,7 +121,7 @@
                 <!-- Main Form Card -->
                 <div class="bg-white rounded-lg border border-zinc-200 shadow-sm p-8">
                     <div class="mb-8">
-                        <h1 class="text-2xl font-medium tracking-tight text-zinc-900 mb-2">Create a Listing</h1>
+                        <h1 class="text-2xl font-medium tracking-tight text-zinc-900 mb-2">Create Rental</h1>
                         <div class="flex items-center gap-2 text-sm text-zinc-500">
                             <span class="font-medium">Step 3 of 6: Media</span>
                             <span>•</span>
@@ -221,7 +222,7 @@
                         <iconify-icon icon="lucide:arrow-left" width="16"></iconify-icon>
                         Previous
                     </a>
-                    <a href="create-listing-step4.html" class="px-6 py-2.5 rounded-md bg-emerald-600 text-white font-medium text-sm hover:bg-emerald-700 transition-colors flex items-center gap-2">
+                    <a href="create-listing-step4.html" onclick="saveStep3Data(event)" class="px-6 py-2.5 rounded-md bg-emerald-600 text-white font-medium text-sm hover:bg-emerald-700 transition-colors flex items-center gap-2">
                         Save & Continue
                         <iconify-icon icon="lucide:arrow-right" width="16"></iconify-icon>
                     </a>
@@ -278,6 +279,21 @@
             if (grid.children.length === 0) {
                 grid.classList.add('hidden');
             }
+        }
+        // Save step 3 data (media)
+        function saveStep3Data(event) {
+            // Media data is typically handled by file uploads, so we'll save counts
+            const step3Data = {
+                media: {
+                    photos: 0, // Would need to count uploaded files
+                    virtualTours: 0,
+                    videos: 0
+                }
+            };
+
+            const current = ListingStorage.getCurrentListing() || {};
+            const updated = { ...current, ...step3Data };
+            ListingStorage.saveCurrentListing(updated);
         }
     </script>
 

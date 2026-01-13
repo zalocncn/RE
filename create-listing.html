@@ -3,11 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create a Listing | Rental Manager</title>
+    <title>Create Rental | Rental Manager</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/base.css">
+    <script src="js/listing-storage.js"></script>
 </head>
 <body class="bg-white text-zinc-900 antialiased selection:bg-emerald-100 selection:text-emerald-900 min-h-screen">
 
@@ -120,7 +121,7 @@
                 <!-- Main Form Card -->
                 <div class="bg-white rounded-lg border border-zinc-200 shadow-sm p-8">
                     <div class="mb-8">
-                        <h1 class="text-2xl font-medium tracking-tight text-zinc-900 mb-2">Create a Listing</h1>
+                        <h1 class="text-2xl font-medium tracking-tight text-zinc-900 mb-2">Create Rental</h1>
                         <div class="flex items-center gap-2 text-sm text-zinc-500">
                             <span class="font-medium">Step 1 of 6: Basics</span>
                             <span>•</span>
@@ -315,7 +316,7 @@
 
                 <!-- Save & Continue Button -->
                 <div class="mt-6 flex justify-end">
-                    <a href="create-listing-step2.html" class="px-6 py-2.5 rounded-md bg-emerald-600 text-white font-medium text-sm hover:bg-emerald-700 transition-colors flex items-center gap-2">
+                    <a href="create-listing-step2.html" onclick="saveStep1Data(event)" class="px-6 py-2.5 rounded-md bg-emerald-600 text-white font-medium text-sm hover:bg-emerald-700 transition-colors flex items-center gap-2">
                         Save & Continue
                         <iconify-icon icon="lucide:arrow-right" width="16"></iconify-icon>
                     </a>
@@ -819,6 +820,28 @@
             const modal = document.getElementById('unitPhotosModal');
             modal.classList.remove('hidden');
             document.body.style.overflow = 'hidden';
+            
+            // Load saved photos
+            const saved = ListingStorage.getCurrentListing();
+            const preview = document.getElementById('photosPreview');
+            if (saved?.unit?.photos && saved.unit.photos.length > 0) {
+                uploadedPhotos = saved.unit.photos;
+                preview.classList.remove('hidden');
+                preview.innerHTML = '';
+                
+                uploadedPhotos.forEach((photo, index) => {
+                    const photoDiv = document.createElement('div');
+                    photoDiv.className = 'relative group';
+                    photoDiv.setAttribute('data-photo-index', index);
+                    photoDiv.innerHTML = `
+                        <img src="${photo.dataUrl}" alt="Photo ${index + 1}" class="w-full h-24 object-cover rounded-lg border border-zinc-200">
+                        <button onclick="removePhoto(this)" class="absolute top-1 right-1 p-1 bg-black/50 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+                            <iconify-icon icon="lucide:x" width="14" class="text-white"></iconify-icon>
+                        </button>
+                    `;
+                    preview.appendChild(photoDiv);
+                });
+            }
         }
 
         function closeUnitPhotosModal() {
@@ -827,6 +850,9 @@
             document.body.style.overflow = '';
         }
 
+        // Store uploaded photos data
+        let uploadedPhotos = [];
+
         function handleFileUpload(event) {
             const files = event.target.files;
             const preview = document.getElementById('photosPreview');
@@ -834,12 +860,21 @@
             if (files.length > 0) {
                 preview.classList.remove('hidden');
                 preview.innerHTML = '';
+                uploadedPhotos = []; // Reset array
                 
                 Array.from(files).forEach((file, index) => {
                     const reader = new FileReader();
                     reader.onload = function(e) {
+                        const photoData = {
+                            name: file.name,
+                            size: file.size,
+                            dataUrl: e.target.result
+                        };
+                        uploadedPhotos.push(photoData);
+                        
                         const photoDiv = document.createElement('div');
                         photoDiv.className = 'relative group';
+                        photoDiv.setAttribute('data-photo-index', uploadedPhotos.length - 1);
                         photoDiv.innerHTML = `
                             <img src="${e.target.result}" alt="Upload ${index + 1}" class="w-full h-24 object-cover rounded-lg border border-zinc-200">
                             <button onclick="removePhoto(this)" class="absolute top-1 right-1 p-1 bg-black/50 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
@@ -847,6 +882,14 @@
                             </button>
                         `;
                         preview.appendChild(photoDiv);
+                        
+                        // Save photos count to localStorage
+                        const current = ListingStorage.getCurrentListing() || {};
+                        if (!current.unit) current.unit = {};
+                        if (!current.media) current.media = {};
+                        current.media.photos = uploadedPhotos.length;
+                        current.unit.photos = uploadedPhotos; // Store photo data
+                        ListingStorage.saveCurrentListing(current);
                     };
                     reader.readAsDataURL(file);
                 });
@@ -854,11 +897,32 @@
         }
 
         function removePhoto(button) {
-            button.closest('.relative').remove();
+            const photoDiv = button.closest('.relative');
+            const photoIndex = parseInt(photoDiv.getAttribute('data-photo-index'));
+            
+            // Remove from array
+            if (photoIndex >= 0 && photoIndex < uploadedPhotos.length) {
+                uploadedPhotos.splice(photoIndex, 1);
+            }
+            
+            photoDiv.remove();
             const preview = document.getElementById('photosPreview');
             if (preview.children.length === 0) {
                 preview.classList.add('hidden');
             }
+            
+            // Update photo indices and save
+            Array.from(preview.children).forEach((div, index) => {
+                div.setAttribute('data-photo-index', index);
+            });
+            
+            // Update localStorage
+            const current = ListingStorage.getCurrentListing() || {};
+            if (!current.unit) current.unit = {};
+            if (!current.media) current.media = {};
+            current.media.photos = uploadedPhotos.length;
+            current.unit.photos = uploadedPhotos;
+            ListingStorage.saveCurrentListing(current);
         }
 
         function applyUnitPhotos() {
@@ -877,6 +941,19 @@
             const modal = document.getElementById('unitAmenitiesModal');
             modal.classList.remove('hidden');
             document.body.style.overflow = 'hidden';
+            
+            // Load saved amenities
+            const saved = ListingStorage.getCurrentListing();
+            if (saved?.unit?.amenities) {
+                const checkboxes = modal.querySelectorAll('.amenity-checkbox');
+                checkboxes.forEach(cb => {
+                    const label = cb.closest('label');
+                    const amenityName = label?.querySelector('span')?.textContent.trim();
+                    if (saved.unit.amenities.includes(amenityName)) {
+                        cb.checked = true;
+                    }
+                });
+            }
             updateSelectedCount();
         }
 
@@ -899,7 +976,22 @@
         }
 
         function applyUnitAmenities() {
-            // Here you would typically save the selected amenities
+            // Collect selected amenities
+            const checkboxes = document.querySelectorAll('#unitAmenitiesModal .amenity-checkbox');
+            const selectedAmenities = Array.from(checkboxes)
+                .filter(cb => cb.checked)
+                .map(cb => {
+                    const label = cb.closest('label');
+                    return label ? label.querySelector('span').textContent.trim() : '';
+                })
+                .filter(text => text);
+
+            // Save to localStorage
+            const current = ListingStorage.getCurrentListing() || {};
+            if (!current.unit) current.unit = {};
+            current.unit.amenities = selectedAmenities;
+            ListingStorage.saveCurrentListing(current);
+            
             closeUnitAmenitiesModal();
         }
 
@@ -914,6 +1006,13 @@
             const modal = document.getElementById('unitDescriptionModal');
             modal.classList.remove('hidden');
             document.body.style.overflow = 'hidden';
+            
+            // Load saved description
+            const saved = ListingStorage.getCurrentListing();
+            const textarea = document.getElementById('unitDescriptionText');
+            if (textarea && saved?.unit?.description) {
+                textarea.value = saved.unit.description;
+            }
             updateCharacterCount();
         }
 
@@ -940,7 +1039,15 @@
         }
 
         function applyUnitDescription() {
-            // Here you would typically save the description
+            // Get description text
+            const descriptionText = document.getElementById('unitDescriptionText')?.value || '';
+
+            // Save to localStorage
+            const current = ListingStorage.getCurrentListing() || {};
+            if (!current.unit) current.unit = {};
+            current.unit.description = descriptionText;
+            ListingStorage.saveCurrentListing(current);
+            
             closeUnitDescriptionModal();
         }
 
@@ -950,6 +1057,53 @@
                 closeUnitDescriptionModal();
             }
         });
+
+        // Save step 1 data before navigating to next step
+        function saveStep1Data(event) {
+            // Collect form data
+            const form = document.querySelector('form');
+            const unitName = form?.querySelector('input[type="text"]')?.value || '';
+            const dateAvailable = form?.querySelector('input[type="date"]')?.value || '';
+            const beds = form?.querySelector('select')?.value || '';
+            const baths = Array.from(form?.querySelectorAll('select'))[1]?.value || '';
+            const size = Array.from(form?.querySelectorAll('input[type="number"]'))[0]?.value || '';
+            const monthlyRent = Array.from(form?.querySelectorAll('input[type="number"]'))[1]?.value || '';
+            const deposit = Array.from(form?.querySelectorAll('input[type="number"]'))[2]?.value || '';
+            const leaseLength = Array.from(form?.querySelectorAll('input[type="number"]'))[3]?.value || '12';
+            const yearBuilt = Array.from(form?.querySelectorAll('input[type="number"]'))[4]?.value || '';
+
+            // Get existing saved data to preserve amenities, description, and photos
+            const current = ListingStorage.getCurrentListing() || {};
+
+            const step1Data = {
+                address: '214 VIA ROBINA, SAN CLEMENTE, CA 92672', // From header
+                unit: {
+                    name: unitName,
+                    dateAvailable: dateAvailable,
+                    beds: beds,
+                    baths: baths,
+                    size: size,
+                    monthlyRent: monthlyRent,
+                    deposit: deposit,
+                    leaseLength: leaseLength,
+                    amenities: current.unit?.amenities || [],
+                    description: current.unit?.description || '',
+                    photos: current.unit?.photos || []
+                },
+                building: {
+                    yearBuilt: yearBuilt
+                },
+                media: {
+                    photos: current.media?.photos || uploadedPhotos.length || 0,
+                    virtualTours: current.media?.virtualTours || 0,
+                    videos: current.media?.videos || 0
+                }
+            };
+
+            // Merge with existing data to preserve all fields
+            const updated = { ...current, ...step1Data };
+            ListingStorage.saveCurrentListing(updated);
+        }
     </script>
 
 </body>

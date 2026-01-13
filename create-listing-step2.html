@@ -3,11 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create a Listing - Step 2: Amenities | Rental Manager</title>
+    <title>Create Rental - Step 2: Amenities | Rental Manager</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/base.css">
+    <script src="js/listing-storage.js"></script>
 </head>
 <body class="bg-white text-zinc-900 antialiased selection:bg-emerald-100 selection:text-emerald-900 min-h-screen">
 
@@ -120,7 +121,7 @@
                 <!-- Main Form Card -->
                 <div class="bg-white rounded-lg border border-zinc-200 shadow-sm p-8">
                     <div class="mb-8">
-                        <h1 class="text-2xl font-medium tracking-tight text-zinc-900 mb-2">Create a Listing</h1>
+                        <h1 class="text-2xl font-medium tracking-tight text-zinc-900 mb-2">Create Rental</h1>
                         <div class="flex items-center gap-2 text-sm text-zinc-500">
                             <span class="font-medium">Step 2 of 6: Amenities</span>
                             <span>•</span>
@@ -325,7 +326,7 @@
                         <iconify-icon icon="lucide:arrow-left" width="16"></iconify-icon>
                         Previous
                     </a>
-                    <a href="create-listing-step3.html" class="px-6 py-2.5 rounded-md bg-emerald-600 text-white font-medium text-sm hover:bg-emerald-700 transition-colors flex items-center gap-2">
+                    <a href="create-listing-step3.html" onclick="saveStep2Data(event)" class="px-6 py-2.5 rounded-md bg-emerald-600 text-white font-medium text-sm hover:bg-emerald-700 transition-colors flex items-center gap-2">
                         Save & Continue
                         <iconify-icon icon="lucide:arrow-right" width="16"></iconify-icon>
                     </a>
@@ -345,6 +346,49 @@
             const chevron = document.querySelector('.account-chevron');
             submenu.classList.toggle('hidden');
             chevron.classList.toggle('rotate-180');
+        }
+
+        // Save step 2 data before navigating to next step
+        function saveStep2Data(event) {
+            const form = document.querySelector('form') || document;
+            const checkboxes = form.querySelectorAll('input[type="checkbox"]');
+            const selectedAmenities = Array.from(checkboxes)
+                .filter(cb => cb.checked)
+                .map(cb => {
+                    const label = cb.closest('label');
+                    return label ? label.textContent.trim() : '';
+                })
+                .filter(text => text);
+
+            const parkingSelect = Array.from(form.querySelectorAll('select')).find(s => 
+                s.previousElementSibling?.textContent?.toLowerCase().includes('parking')
+            );
+            const parkingFeeInput = Array.from(form.querySelectorAll('input[type="number"]')).find(input => 
+                input.previousElementSibling?.textContent?.toLowerCase().includes('parking fee')
+            );
+
+            const step2Data = {
+                propertyAmenities: selectedAmenities.filter(a => 
+                    !['Washer/Dryer', 'Laundry', 'Gas', 'Water', 'Electricity', 'Heat', 'Trash', 'Sewer', 'Cable', 'Air Conditioning'].some(term => a.includes(term))
+                ),
+                laundry: selectedAmenities.filter(a => a.includes('Washer') || a.includes('Laundry')),
+                utilities: selectedAmenities.filter(a => 
+                    ['Gas', 'Water', 'Electricity', 'Heat', 'Trash Removal', 'Sewer', 'Cable', 'Air Conditioning'].some(term => a.includes(term))
+                ),
+                parking: {
+                    type: parkingSelect?.value || '',
+                    fee: parkingFeeInput?.value || ''
+                },
+                pets: {
+                    allowed: form.querySelector('input[name="pets"]')?.checked || false,
+                    type: form.querySelector('select')?.value || ''
+                }
+            };
+
+            // Save to localStorage
+            const current = ListingStorage.getCurrentListing() || {};
+            const updated = { ...current, ...step2Data };
+            ListingStorage.saveCurrentListing(updated);
         }
     </script>
 
