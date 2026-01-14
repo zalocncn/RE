@@ -430,20 +430,57 @@
 
         function createPrivateIssue() {
             const form = document.getElementById('maintenanceForm');
+            const propertyInput = document.getElementById('propertySearchInput').value || '';
+            const unitInput = form.querySelector('input[placeholder*="Select unit"]')?.value || '';
+            const title = document.getElementById('titleInput').value.trim();
+            
+            // Validate required fields
+            if (!title) {
+                alert('Please enter a title for the maintenance issue.');
+                return;
+            }
+            
+            if (!propertyInput) {
+                alert('Please select a property.');
+                return;
+            }
+
+            // Format property address
+            const propertyAddress = propertyInput;
+            let streetAddress = propertyAddress;
+            let cityState = '';
+            
+            // Split address if it contains comma
+            if (propertyAddress.includes(',')) {
+                const parts = propertyAddress.split(',');
+                streetAddress = parts[0].trim();
+                cityState = parts.slice(1).join(',').trim();
+            }
+            
+            // Add unit to street address if provided
+            if (unitInput) {
+                streetAddress = `${streetAddress}, ${unitInput}`;
+            }
+
             const formData = {
-                property: document.getElementById('propertySearchInput').value || '',
+                id: Date.now().toString(),
+                property: propertyAddress,
                 propertyId: selectedPropertyId || null,
-                unit: form.querySelector('input[placeholder*="Select unit"]')?.value || '',
-                title: document.getElementById('titleInput').value,
-                description: document.getElementById('descriptionInput').value,
+                unit: unitInput,
+                streetAddress: streetAddress,
+                cityState: cityState,
+                title: title,
+                description: document.getElementById('descriptionInput').value.trim(),
                 files: Array.from(document.getElementById('fileInput').files).map(f => f.name),
                 createdAt: new Date().toISOString(),
-                status: 'private'
+                createdDate: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+                createdBy: 'Rita Noriega',
+                status: 'open',
+                isPrivate: true
             };
 
             // Save to localStorage
             const issues = JSON.parse(localStorage.getItem('maintenanceIssues') || '[]');
-            formData.id = Date.now().toString();
             issues.push(formData);
             localStorage.setItem('maintenanceIssues', JSON.stringify(issues));
 

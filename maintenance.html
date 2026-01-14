@@ -20,10 +20,6 @@
                 </button>
             </div>
             <div class="flex items-center gap-4 ml-auto">
-                <a href="create-listing.html" class="text-sm font-medium bg-emerald-600 text-white px-4 py-2 rounded-md hover:bg-emerald-700 transition-colors flex items-center gap-2">
-                    <iconify-icon icon="lucide:plus" width="14"></iconify-icon>
-                    Add a Property
-                </a>
                 <div class="flex items-center gap-2 px-3 py-1.5 hover:bg-zinc-50 rounded-md cursor-pointer transition-colors">
                     <div class="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700 text-xs font-medium">R</div>
                     <span class="text-sm font-medium text-zinc-900 hidden sm:block">Rita</span>
@@ -115,79 +111,64 @@
     <!-- Main Content -->
     <main class="md:ml-64 pt-14 min-h-screen bg-zinc-50">
         <div class="p-6">
-            <div class="max-w-4xl mx-auto">
-                <!-- Page Header -->
-                <h1 class="text-3xl font-medium tracking-tight text-zinc-900 mb-12">Maintenance</h1>
+            <!-- Page Header -->
+            <div class="flex items-center justify-between mb-6">
+                <h1 class="text-3xl font-bold tracking-tight text-zinc-900">Maintenance</h1>
+                <a href="new-maintenance-issue.html" class="bg-emerald-600 hover:bg-emerald-700 text-white font-medium px-4 py-2 rounded-md transition-colors text-sm">
+                    New Issue
+                </a>
+            </div>
 
-                <!-- Feature Card -->
-                <div class="bg-white rounded-lg border border-zinc-200 shadow-sm p-8 md:p-12">
-                    <!-- Icon -->
-                    <div class="flex justify-center mb-6">
-                        <div class="relative">
-                            <div class="w-20 h-20 bg-emerald-100 rounded-lg flex items-center justify-center">
-                                <iconify-icon icon="lucide:message-square" width="40" class="text-emerald-600"></iconify-icon>
-                                <div class="absolute inset-0 flex items-center justify-center">
-                                    <iconify-icon icon="lucide:wrench" width="24" class="text-emerald-700"></iconify-icon>
-                                </div>
-                            </div>
-                            <div class="absolute -top-1 -right-1 w-8 h-8 bg-emerald-600 rounded-full flex items-center justify-center border-2 border-white">
-                                <iconify-icon icon="lucide:plus" width="16" class="text-white"></iconify-icon>
-                            </div>
-                        </div>
+            <!-- Filter and Search Bar -->
+            <div class="bg-white rounded-lg border border-zinc-200 shadow-sm p-4 mb-6">
+                <div class="flex flex-col md:flex-row gap-4 items-center">
+                    <!-- Status Toggles -->
+                    <div class="flex gap-2">
+                        <button class="status-toggle active px-4 py-2 rounded-full bg-emerald-700 text-white text-sm font-medium transition-colors">
+                            Open
+                        </button>
+                        <button class="status-toggle px-4 py-2 rounded-full bg-white border border-emerald-600 text-emerald-600 text-sm font-medium hover:bg-emerald-50 transition-colors">
+                            Closed
+                        </button>
                     </div>
 
-                    <!-- Heading -->
-                    <h2 class="text-2xl md:text-3xl font-medium text-zinc-900 text-center mb-8">
-                        Stay Organized with Maintenance Requests
-                    </h2>
-
-                    <!-- Features List -->
-                    <div class="space-y-6 mb-8">
-                        <!-- Feature 1 -->
-                        <div class="flex items-start gap-4">
-                            <div class="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                                <iconify-icon icon="lucide:file-check" width="24" class="text-emerald-600"></iconify-icon>
-                            </div>
-                            <div>
-                                <h3 class="text-lg font-medium text-zinc-900 mb-1">Receive requests from residents</h3>
-                            </div>
-                        </div>
-
-                        <!-- Feature 2 -->
-                        <div class="flex items-start gap-4">
-                            <div class="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                                <iconify-icon icon="lucide:book-open" width="24" class="text-emerald-600"></iconify-icon>
-                            </div>
-                            <div>
-                                <h3 class="text-lg font-medium text-zinc-900 mb-1">Track issues across multiple properties</h3>
-                            </div>
-                        </div>
-
-                        <!-- Feature 3 -->
-                        <div class="flex items-start gap-4">
-                            <div class="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                                <iconify-icon icon="lucide:dollar-sign" width="24" class="text-emerald-600"></iconify-icon>
-                            </div>
-                            <div>
-                                <h3 class="text-lg font-medium text-zinc-900 mb-1">Record all repairs and related expenses</h3>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Call to Action Button -->
-                    <div class="flex justify-center mb-6">
-                        <a href="new-maintenance-issue.html" class="px-6 py-3 rounded-md bg-emerald-600 text-white font-medium text-sm hover:bg-emerald-700 transition-colors inline-block">
-                            Get Started
-                        </a>
-                    </div>
-
-                    <!-- Learn More Link -->
-                    <div class="text-center">
-                        <a href="#" class="inline-flex items-center gap-2 text-sm text-zinc-600 hover:text-blue-600 transition-colors">
-                            Learn more about <span class="text-blue-600 underline">Maintenance Requests</span> with Rental Manager
-                        </a>
+                    <!-- Search Input -->
+                    <div class="flex-1 relative">
+                        <input 
+                            type="text" 
+                            id="searchInput"
+                            placeholder="Search by address" 
+                            class="w-full px-4 py-2 pr-10 rounded-md border border-zinc-200 bg-white text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                            oninput="handleSearch()"
+                        >
+                        <iconify-icon icon="lucide:search" width="18" class="absolute right-3 top-2.5 text-zinc-400"></iconify-icon>
                     </div>
                 </div>
+            </div>
+
+            <!-- Results Summary and Sort -->
+            <div class="flex items-center justify-between mb-4">
+                <p id="resultsCount" class="text-sm text-zinc-600">Showing 0 Results</p>
+                <button class="flex items-center gap-2 text-sm text-zinc-600 hover:text-zinc-900 transition-colors">
+                    <span>Sort: Last Activity</span>
+                    <iconify-icon icon="lucide:arrow-up-down" width="16"></iconify-icon>
+                </button>
+            </div>
+
+            <!-- Maintenance Issues List -->
+            <div id="maintenanceIssuesList" class="space-y-4 mb-6">
+                <!-- Issues will be loaded dynamically -->
+            </div>
+
+            <!-- Pagination -->
+            <div class="flex items-center justify-center gap-2">
+                <button class="p-2 rounded-md border border-zinc-200 hover:bg-zinc-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                    <iconify-icon icon="lucide:chevron-left" width="16" class="text-zinc-600"></iconify-icon>
+                </button>
+                <span class="px-4 py-2 text-sm font-medium text-zinc-900">1</span>
+                <button class="p-2 rounded-md border border-zinc-200 hover:bg-zinc-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                    <iconify-icon icon="lucide:chevron-right" width="16" class="text-zinc-600"></iconify-icon>
+                </button>
             </div>
         </div>
     </main>
@@ -204,6 +185,132 @@
             submenu.classList.toggle('hidden');
             chevron.classList.toggle('rotate-180');
         }
+
+        // Status toggle functionality
+        let currentStatusFilter = 'open';
+        let searchTerm = '';
+        
+        function handleSearch() {
+            const searchInput = document.getElementById('searchInput');
+            searchTerm = searchInput.value.toLowerCase().trim();
+            loadMaintenanceIssues();
+        }
+        
+        function loadMaintenanceIssues() {
+            const issues = JSON.parse(localStorage.getItem('maintenanceIssues') || '[]');
+            const issuesList = document.getElementById('maintenanceIssuesList');
+            const resultsCount = document.getElementById('resultsCount');
+            
+            // Filter by status
+            let filteredIssues = issues.filter(issue => {
+                if (currentStatusFilter === 'open') {
+                    return issue.status === 'open';
+                } else {
+                    return issue.status === 'closed';
+                }
+            });
+            
+            // Filter by search term
+            if (searchTerm) {
+                filteredIssues = filteredIssues.filter(issue => {
+                    const title = (issue.title || '').toLowerCase();
+                    const address = (issue.streetAddress || issue.property || '').toLowerCase();
+                    const cityState = (issue.cityState || '').toLowerCase();
+                    return title.includes(searchTerm) || address.includes(searchTerm) || cityState.includes(searchTerm);
+                });
+            }
+            
+            // Update results count
+            const count = filteredIssues.length;
+            resultsCount.textContent = `Showing ${count} Result${count !== 1 ? 's' : ''}`;
+            
+            // Clear existing issues
+            issuesList.innerHTML = '';
+            
+            if (filteredIssues.length === 0) {
+                issuesList.innerHTML = `
+                    <div class="text-center py-16">
+                        <p class="text-lg font-medium text-zinc-900 mb-2">No Matching Results</p>
+                        <p class="text-sm text-zinc-500">Your search did not return any results.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Render each issue
+            filteredIssues.forEach(issue => {
+                const issueCard = document.createElement('div');
+                issueCard.className = 'bg-white rounded-lg border border-zinc-200 shadow-sm p-6 hover:shadow-md transition-shadow';
+                
+                const createdDate = issue.createdDate || new Date(issue.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+                const createdBy = issue.createdBy || 'Rita Noriega';
+                const isPrivate = issue.isPrivate !== false; // Default to true
+                
+                issueCard.innerHTML = `
+                    <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+                        <!-- Left Side - Issue Details -->
+                        <div class="flex-1">
+                            <h3 class="text-lg font-bold text-zinc-900 mb-2">${issue.title || 'Untitled Issue'}</h3>
+                            <div class="flex items-center gap-2 text-sm text-zinc-600">
+                                ${isPrivate ? '<iconify-icon icon="lucide:eye" width="16" class="text-zinc-400"></iconify-icon>' : ''}
+                                <span>${isPrivate ? 'Internal private' : 'Public'} issue created on ${createdDate} by ${createdBy}${createdBy === 'Rita Noriega' ? ' (you)' : ''}</span>
+                            </div>
+                        </div>
+
+                        <!-- Right Side - Property Address -->
+                        <div class="text-right">
+                            <p class="text-sm font-medium text-zinc-900">${issue.streetAddress || issue.property || 'No address'}</p>
+                            ${issue.cityState ? `<p class="text-sm text-zinc-600">${issue.cityState}</p>` : ''}
+                        </div>
+                    </div>
+                `;
+                
+                issuesList.appendChild(issueCard);
+            });
+        }
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            const statusToggles = document.querySelectorAll('.status-toggle');
+            statusToggles.forEach(toggle => {
+                toggle.addEventListener('click', function() {
+                    // Remove active class from all toggles
+                    statusToggles.forEach(btn => {
+                        btn.classList.remove('active', 'bg-emerald-700', 'text-white');
+                        btn.classList.add('bg-white', 'border', 'border-emerald-600', 'text-emerald-600');
+                    });
+                    // Add active class to clicked toggle
+                    this.classList.remove('bg-white', 'border', 'border-emerald-600', 'text-emerald-600');
+                    this.classList.add('active', 'bg-emerald-700', 'text-white');
+                    
+                    // Update filter and reload
+                    currentStatusFilter = this.textContent.trim().toLowerCase();
+                    loadMaintenanceIssues();
+                });
+            });
+            
+            // Initialize with default issue if none exist
+            const existingIssues = JSON.parse(localStorage.getItem('maintenanceIssues') || '[]');
+            if (existingIssues.length === 0) {
+                const defaultIssue = {
+                    id: 'default-1',
+                    property: '214 Via Robina, San Clemente, CA 92672',
+                    streetAddress: '214 Via Robina, Unit 14',
+                    cityState: 'San Clemente, CA 92672',
+                    title: 'gutter cleaning',
+                    description: '',
+                    files: [],
+                    createdAt: new Date('2026-01-13').toISOString(),
+                    createdDate: 'Jan 13, 2026',
+                    createdBy: 'Rita Noriega',
+                    status: 'open',
+                    isPrivate: true
+                };
+                localStorage.setItem('maintenanceIssues', JSON.stringify([defaultIssue]));
+            }
+            
+            // Load issues on page load
+            loadMaintenanceIssues();
+        });
     </script>
 
 </body>

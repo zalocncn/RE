@@ -20,10 +20,10 @@
                 </button>
             </div>
             <div class="flex items-center gap-4 ml-auto">
-                <a href="#" class="text-sm font-medium bg-emerald-600 text-white px-4 py-2 rounded-md hover:bg-emerald-700 transition-colors flex items-center gap-2">
+                <button onclick="openInviteModal()" class="text-sm font-medium bg-emerald-600 text-white px-4 py-2 rounded-md hover:bg-emerald-700 transition-colors flex items-center gap-2">
                     <iconify-icon icon="lucide:user-plus" width="14"></iconify-icon>
                     Invite to Apply
-                </a>
+                </button>
                 <div class="flex items-center gap-2 px-3 py-1.5 hover:bg-zinc-50 rounded-md cursor-pointer transition-colors">
                     <div class="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700 text-xs font-medium">R</div>
                     <span class="text-sm font-medium text-zinc-900 hidden sm:block">Rita</span>
@@ -193,7 +193,69 @@
         <iconify-icon icon="lucide:help-circle" width="24"></iconify-icon>
     </button>
 
+    <!-- Invite to Apply Modal -->
+    <div id="inviteModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-lg shadow-xl max-w-md w-full">
+            <!-- Modal Header -->
+            <div class="flex items-center justify-between p-6 border-b border-zinc-200">
+                <h2 class="text-xl font-medium text-zinc-900">Select a property</h2>
+                <button onclick="closeInviteModal()" class="p-2 hover:bg-zinc-50 rounded-md transition-colors">
+                    <iconify-icon icon="lucide:x" width="20" class="text-zinc-500"></iconify-icon>
+                </button>
+            </div>
+            
+            <!-- Modal Content -->
+            <div class="p-6">
+                <p class="text-sm text-zinc-600 mb-6">
+                    Select the property you would like to invite a renter to apply to.
+                </p>
+                
+                <!-- Property Selection -->
+                <div>
+                    <label for="propertySelect" class="block text-sm font-medium text-zinc-900 mb-2">
+                        Property
+                    </label>
+                    <div class="relative">
+                        <input 
+                            type="text" 
+                            id="propertySelect" 
+                            placeholder="Select a property" 
+                            class="w-full px-4 py-2 pr-10 rounded-md border border-zinc-200 bg-white text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                        >
+                        <iconify-icon icon="lucide:search" width="18" class="absolute right-3 top-2.5 text-emerald-600"></iconify-icon>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
+        // Modal functions
+        function openInviteModal() {
+            const modal = document.getElementById('inviteModal');
+            if (modal) {
+                modal.classList.remove('hidden');
+            }
+        }
+
+        function closeInviteModal() {
+            const modal = document.getElementById('inviteModal');
+            if (modal) {
+                modal.classList.add('hidden');
+            }
+        }
+
+        // Close modal when clicking outside
+        document.addEventListener('DOMContentLoaded', function() {
+            const modal = document.getElementById('inviteModal');
+            if (modal) {
+                modal.addEventListener('click', function(e) {
+                    if (e.target === modal) {
+                        closeInviteModal();
+                    }
+                });
+            }
+        });
         function toggleAccountDropdown() {
             const submenu = document.querySelector('.account-submenu');
             const chevron = document.querySelector('.account-chevron');

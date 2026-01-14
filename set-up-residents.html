@@ -113,182 +113,37 @@
         <div class="p-6">
             <div class="max-w-4xl mx-auto">
                 <!-- Page Title -->
-                <div class="text-center mb-8">
-                    <h1 class="text-3xl font-medium tracking-tight text-zinc-900 mb-4">Set up residents</h1>
-                    <p class="text-sm text-zinc-600 max-w-2xl mx-auto mb-4">
+                <div class="mb-8">
+                    <h1 class="text-3xl font-bold tracking-tight text-zinc-900 mb-4">Set up residents</h1>
+                    <p class="text-sm text-zinc-600 mb-4">
                         The basic information below will set you up to create a lease document, upload documents, and set up online rent collection all in one place.
                     </p>
                     <a href="#" class="inline-flex items-center gap-2 text-sm text-blue-600 hover:text-blue-700">
-                        <iconify-icon icon="lucide:file-text" width="16"></iconify-icon>
+                        <iconify-icon icon="lucide:check-circle" width="16"></iconify-icon>
                         Learn more about adding and managing residents
                     </a>
                 </div>
 
-                <!-- Form Sections -->
-                <div class="space-y-6">
-                    <!-- Select Property Section -->
-                    <div class="bg-white rounded-lg border border-zinc-200 shadow-sm p-6">
-                        <h2 class="text-lg font-medium text-zinc-900 mb-4">Select Property</h2>
-                        
-                        <div class="space-y-4">
-                            <div>
-                                <label class="block text-sm font-medium text-zinc-900 mb-2">Property</label>
-                                <div class="relative">
-                                    <input 
-                                        type="text" 
-                                        value="214 Via Robina San Clemente, CA 92672" 
-                                        class="w-full px-4 py-2 pr-10 rounded-md border border-zinc-200 bg-white text-zinc-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                                    >
-                                    <iconify-icon icon="lucide:search" width="18" class="absolute right-3 top-2.5 text-zinc-400"></iconify-icon>
-                                </div>
-                            </div>
+                <!-- Select Property Section -->
+                <div class="bg-white rounded-lg border border-zinc-200 shadow-sm p-6">
+                    <h2 class="text-lg font-medium text-zinc-900 mb-4">Select Property</h2>
+                    
+                    <div class="space-y-4">
+                        <div class="relative">
+                            <input 
+                                type="text" 
+                                placeholder="Search by address or property name" 
+                                class="w-full px-4 py-2 pr-10 rounded-md border border-zinc-200 bg-white text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                            >
+                            <iconify-icon icon="lucide:search" width="18" class="absolute right-3 top-2.5 text-zinc-400"></iconify-icon>
+                        </div>
 
-                            <div>
-                                <label class="block text-sm font-medium text-zinc-900 mb-2">Unit</label>
-                                <div class="relative">
-                                    <input 
-                                        type="text" 
-                                        value="Unit 14" 
-                                        class="w-full px-4 py-2 pr-10 rounded-md border border-zinc-200 bg-white text-zinc-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                                    >
-                                    <iconify-icon icon="lucide:search" width="18" class="absolute right-3 top-2.5 text-zinc-400"></iconify-icon>
-                                </div>
-                            </div>
-
-                            <!-- Property Preview -->
-                            <div class="flex items-center gap-4 p-4 bg-zinc-50 rounded-lg border border-zinc-200">
-                                <div class="w-20 h-20 bg-zinc-100 rounded-lg overflow-hidden flex-shrink-0">
-                                    <img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=200&h=200&fit=crop" alt="Property" class="w-full h-full object-cover">
-                                </div>
-                                <div>
-                                    <p class="text-sm font-medium text-zinc-900">214 Via Robina, Unit 14</p>
-                                    <p class="text-sm text-zinc-500">San Clemente, CA 92672</p>
-                                </div>
-                            </div>
+                        <div class="flex justify-end">
+                            <a href="leases.html" class="px-4 py-2 rounded-md bg-emerald-600 text-white font-medium text-sm hover:bg-emerald-700 transition-colors">
+                                Cancel
+                            </a>
                         </div>
                     </div>
-
-                    <!-- Set Lease Term Section -->
-                    <div class="bg-white rounded-lg border border-zinc-200 shadow-sm p-6">
-                        <div class="flex items-center gap-2 mb-4">
-                            <h2 class="text-lg font-medium text-zinc-900">Set Lease Term</h2>
-                            <iconify-icon icon="lucide:info" width="16" class="text-zinc-400"></iconify-icon>
-                        </div>
-                        
-                        <div class="space-y-4">
-                            <div class="flex gap-6">
-                                <label class="flex items-center gap-3 cursor-pointer">
-                                    <input type="radio" name="leaseType" value="fixed" class="w-4 h-4 text-emerald-600 focus:ring-emerald-500">
-                                    <span class="text-sm text-zinc-700">Fixed Dates</span>
-                                </label>
-                                <label class="flex items-center gap-3 cursor-pointer">
-                                    <input type="radio" name="leaseType" value="monthly" class="w-4 h-4 text-emerald-600 focus:ring-emerald-500">
-                                    <span class="text-sm text-zinc-700">Month To Month</span>
-                                </label>
-                            </div>
-
-                            <div>
-                                <label class="block text-sm font-medium text-zinc-900 mb-2">Lease Start Date</label>
-                                <div class="relative">
-                                    <input 
-                                        type="date" 
-                                        class="w-full px-4 py-2 pr-10 rounded-md border border-zinc-200 bg-white text-zinc-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                                    >
-                                    <iconify-icon icon="lucide:calendar" width="18" class="absolute right-3 top-2.5 text-zinc-400 pointer-events-none"></iconify-icon>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Add Residents Section -->
-                    <div class="bg-white rounded-lg border border-zinc-200 shadow-sm p-6">
-                        <div class="flex items-center gap-2 mb-2">
-                            <h2 class="text-lg font-medium text-zinc-900">Add Residents</h2>
-                            <iconify-icon icon="lucide:info" width="16" class="text-zinc-400"></iconify-icon>
-                        </div>
-                        
-                        <p class="text-sm text-zinc-600 mb-6">
-                            You may also add guarantors and minors, but you must include at least one resident.
-                        </p>
-
-                        <div id="residentsContainer" class="space-y-6">
-                            <!-- First Resident -->
-                            <div class="resident-form border border-zinc-200 rounded-lg p-6 bg-zinc-50/50">
-                                <div class="mb-4">
-                                    <label class="block text-sm font-medium text-zinc-900 mb-2">Type</label>
-                                    <select class="w-full px-4 py-2 rounded-md border border-zinc-200 bg-white text-zinc-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent">
-                                        <option value="resident" selected>Resident</option>
-                                        <option value="guarantor">Guarantor</option>
-                                        <option value="minor">Minor</option>
-                                    </select>
-                                </div>
-
-                                <div class="mb-4 p-3 bg-blue-50 border border-blue-100 rounded-md">
-                                    <p class="text-xs text-blue-800">
-                                        If you plan to use a Rental Manager lease, be sure to use residents' legal names as indicated on their drivers license or other valid form of identification.
-                                    </p>
-                                </div>
-
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div>
-                                        <label class="block text-sm font-medium text-zinc-900 mb-2">First name</label>
-                                        <input 
-                                            type="text" 
-                                            class="w-full px-4 py-2 rounded-md border border-zinc-200 bg-white text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                                            placeholder=""
-                                        >
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-medium text-zinc-900 mb-2">Middle name <span class="text-zinc-400 font-normal">(optional)</span></label>
-                                        <input 
-                                            type="text" 
-                                            class="w-full px-4 py-2 rounded-md border border-zinc-200 bg-white text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                                            placeholder=""
-                                        >
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-medium text-zinc-900 mb-2">Last name</label>
-                                        <input 
-                                            type="text" 
-                                            class="w-full px-4 py-2 rounded-md border border-zinc-200 bg-white text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                                            placeholder=""
-                                        >
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-medium text-zinc-900 mb-2">Email</label>
-                                        <input 
-                                            type="email" 
-                                            class="w-full px-4 py-2 rounded-md border border-zinc-200 bg-white text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                                            placeholder=""
-                                        >
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-medium text-zinc-900 mb-2">Phone number <span class="text-zinc-400 font-normal">(optional)</span></label>
-                                        <input 
-                                            type="tel" 
-                                            class="w-full px-4 py-2 rounded-md border border-zinc-200 bg-white text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                                            placeholder=""
-                                        >
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <button onclick="addAnotherPerson()" class="mt-4 flex items-center gap-2 text-sm text-emerald-600 hover:text-emerald-700 font-medium">
-                            <iconify-icon icon="lucide:plus" width="16"></iconify-icon>
-                            Add another person
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Action Buttons -->
-                <div class="mt-8 flex justify-end gap-4">
-                    <a href="leases.html" class="px-6 py-2.5 rounded-md border border-zinc-200 text-zinc-700 font-medium text-sm hover:bg-zinc-50 transition-colors">
-                        Cancel
-                    </a>
-                    <button onclick="finishSetup()" class="px-6 py-2.5 rounded-md bg-emerald-600 text-white font-medium text-sm hover:bg-emerald-700 transition-colors">
-                        Finish
-                    </button>
                 </div>
             </div>
         </div>
@@ -305,134 +160,6 @@
             const chevron = document.querySelector('.account-chevron');
             submenu.classList.toggle('hidden');
             chevron.classList.toggle('rotate-180');
-        }
-
-        function addAnotherPerson() {
-            const container = document.getElementById('residentsContainer');
-            const newForm = document.createElement('div');
-            newForm.className = 'resident-form border border-zinc-200 rounded-lg p-6 bg-zinc-50/50';
-            newForm.innerHTML = `
-                <div class="mb-4">
-                    <label class="block text-sm font-medium text-zinc-900 mb-2">Type</label>
-                    <select class="w-full px-4 py-2 rounded-md border border-zinc-200 bg-white text-zinc-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent">
-                        <option value="resident" selected>Resident</option>
-                        <option value="guarantor">Guarantor</option>
-                        <option value="minor">Minor</option>
-                    </select>
-                </div>
-
-                <div class="mb-4 p-3 bg-blue-50 border border-blue-100 rounded-md">
-                    <p class="text-xs text-blue-800">
-                        If you plan to use a Rental Manager lease, be sure to use residents' legal names as indicated on their drivers license or other valid form of identification.
-                    </p>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm font-medium text-zinc-900 mb-2">First name</label>
-                        <input 
-                            type="text" 
-                            class="w-full px-4 py-2 rounded-md border border-zinc-200 bg-white text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                            placeholder=""
-                        >
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-zinc-900 mb-2">Middle name <span class="text-zinc-400 font-normal">(optional)</span></label>
-                        <input 
-                            type="text" 
-                            class="w-full px-4 py-2 rounded-md border border-zinc-200 bg-white text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                            placeholder=""
-                        >
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-zinc-900 mb-2">Last name</label>
-                        <input 
-                            type="text" 
-                            class="w-full px-4 py-2 rounded-md border border-zinc-200 bg-white text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                            placeholder=""
-                        >
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-zinc-900 mb-2">Email</label>
-                        <input 
-                            type="email" 
-                            class="w-full px-4 py-2 rounded-md border border-zinc-200 bg-white text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                            placeholder=""
-                        >
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-zinc-900 mb-2">Phone number <span class="text-zinc-400 font-normal">(optional)</span></label>
-                        <input 
-                            type="tel" 
-                            class="w-full px-4 py-2 rounded-md border border-zinc-200 bg-white text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                            placeholder=""
-                        >
-                    </div>
-                </div>
-            `;
-            container.appendChild(newForm);
-        }
-
-        function finishSetup() {
-            // Collect resident data
-            const residents = [];
-            const residentForms = document.querySelectorAll('.resident-form');
-            
-            const leaseStartDate = document.querySelector('input[type="date"]')?.value || '';
-            const leaseType = document.querySelector('input[name="leaseType"]:checked')?.value || 'fixed';
-            const property = document.querySelector('input[value*="214 Via Robina"]')?.value || '';
-            const unit = document.querySelector('input[value*="Unit 14"]')?.value || '';
-
-            // Calculate lease end date
-            let leaseEndDate = '';
-            if (leaseStartDate) {
-                const start = new Date(leaseStartDate);
-                const end = new Date(start);
-                if (leaseType === 'monthly') {
-                    end.setMonth(end.getMonth() + 1);
-                } else {
-                    // Fixed dates - default to 12 months
-                    end.setMonth(end.getMonth() + 12);
-                }
-                leaseEndDate = end.toISOString().split('T')[0];
-            }
-
-            residentForms.forEach(form => {
-                const type = form.querySelector('select').value;
-                const firstName = form.querySelector('input[type="text"]').value;
-                const middleName = form.querySelectorAll('input[type="text"]')[1]?.value || '';
-                const lastName = form.querySelectorAll('input[type="text"]')[2]?.value;
-                const email = form.querySelector('input[type="email"]')?.value || '';
-                const phone = form.querySelector('input[type="tel"]')?.value || '';
-                
-                if (firstName && lastName) {
-                    residents.push({
-                        type: type,
-                        firstName: firstName,
-                        middleName: middleName,
-                        lastName: lastName,
-                        email: email,
-                        phone: phone,
-                        property: property,
-                        unit: unit,
-                        leaseStartDate: leaseStartDate,
-                        leaseEndDate: leaseEndDate,
-                        leaseType: leaseType
-                    });
-                }
-            });
-
-            // Save residents to localStorage
-            if (residents.length > 0) {
-                const existingResidents = JSON.parse(localStorage.getItem('residents') || '[]');
-                const allResidents = [...existingResidents, ...residents];
-                localStorage.setItem('residents', JSON.stringify(allResidents));
-                
-                // Redirect to leases page
-                window.location.href = 'leases.html';
-            } else {
-                alert('Please add at least one resident before continuing.');
-            }
         }
     </script>
 
