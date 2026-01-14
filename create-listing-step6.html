@@ -120,28 +120,37 @@
             }
 
             // Update Media section
-            if (savedData.media || savedData.unit?.photos) {
-                const mediaSection = Array.from(document.querySelectorAll('h2.text-lg.font-medium')).find(h => 
-                    h.textContent === 'Media'
-                )?.closest('.border');
-                if (mediaSection) {
-                    const photosHeading = mediaSection.querySelector('h3');
-                    const photosCount = savedData.media?.photos || savedData.unit?.photos?.length || 0;
-                    if (photosHeading && photosCount !== undefined) {
-                        photosHeading.textContent = `Photos (${photosCount})`;
+            const mediaSection = Array.from(document.querySelectorAll('h2.text-lg.font-medium')).find(h => 
+                h.textContent === 'Media'
+            )?.closest('.border');
+            
+            if (mediaSection) {
+                const photosHeading = document.getElementById('photosHeading');
+                const photosContainer = document.getElementById('photosContainer');
+                const defaultPhoto = document.getElementById('defaultPhoto');
+                
+                // Get photos count
+                const photosCount = savedData.unit?.photos?.length || savedData.media?.photos || 0;
+                
+                if (photosHeading) {
+                    photosHeading.textContent = `Photos (${photosCount})`;
+                }
+                
+                // Display uploaded photos if available
+                if (savedData.unit?.photos && savedData.unit.photos.length > 0 && photosContainer) {
+                    // Hide default photo
+                    if (defaultPhoto) {
+                        defaultPhoto.style.display = 'none';
                     }
                     
-                    // Display unit photos if available
-                    if (savedData.unit?.photos && savedData.unit.photos.length > 0) {
-                        const photosContainer = mediaSection.querySelector('.w-full.h-48.bg-zinc-100');
-                        if (photosContainer) {
-                            // Show first photo
-                            const firstPhoto = savedData.unit.photos[0];
-                            if (firstPhoto.dataUrl) {
-                                photosContainer.innerHTML = `<img src="${firstPhoto.dataUrl}" alt="Unit photo" class="w-full h-full object-cover">`;
-                            }
-                        }
+                    // Show first photo (main photo)
+                    const firstPhoto = savedData.unit.photos[0];
+                    if (firstPhoto && firstPhoto.dataUrl) {
+                        photosContainer.innerHTML = `<img src="${firstPhoto.dataUrl}" alt="Property photo" class="w-full h-full object-cover">`;
                     }
+                } else if (photosContainer && defaultPhoto) {
+                    // Show default photo if no photos uploaded
+                    defaultPhoto.style.display = 'block';
                 }
             }
 
@@ -392,9 +401,9 @@
                                 </div>
                                 <div class="space-y-4">
                                     <div>
-                                        <h3 class="text-sm font-medium text-zinc-700 mb-2">Photos (1)</h3>
-                                        <div class="w-full h-48 bg-zinc-100 rounded-lg overflow-hidden">
-                                            <img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&h=600&fit=crop" alt="Property photo" class="w-full h-full object-cover">
+                                        <h3 class="text-sm font-medium text-zinc-700 mb-2" id="photosHeading">Photos (0)</h3>
+                                        <div id="photosContainer" class="w-full h-48 bg-zinc-100 rounded-lg overflow-hidden">
+                                            <img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&h=600&fit=crop" alt="Property photo" class="w-full h-full object-cover" id="defaultPhoto">
                                         </div>
                                     </div>
                                     <div>
@@ -653,7 +662,8 @@
                     deposit: deposit,
                     leaseLength: leaseLength,
                     amenities: unitAmenities,
-                    description: listingData.unit?.description || ''
+                    description: listingData.unit?.description || '',
+                    photos: listingData.unit?.photos || [] // Preserve uploaded photos
                 },
                 building: {
                     ...listingData.building,

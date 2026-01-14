@@ -158,6 +158,7 @@
                             <div class="relative">
                                 <input 
                                     type="text" 
+                                    id="unitInput"
                                     placeholder="Select unit"
                                     class="w-full px-4 py-2 pr-10 rounded-md border border-zinc-200 bg-white text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                                 >
@@ -311,23 +312,24 @@
                 {
                     id: 'default-1',
                     address: '123 Main Street, Los Angeles, CA 90001',
-                    unit: { monthlyRent: 1800 },
+                    unit: { monthlyRent: 1800, name: '' },
                     status: 'active'
                 },
                 {
                     id: 'default-2',
                     address: '456 Oak Avenue, San Diego, CA 92101',
-                    unit: { monthlyRent: 2100 },
+                    unit: { monthlyRent: 2100, name: '' },
                     status: 'vacant'
                 },
                 {
                     id: 'default-3',
                     address: '214 Via Robina, San Clemente, CA 92672',
-                    unit: { monthlyRent: 2500 },
+                    unit: { monthlyRent: 2500, name: '14' },
                     status: 'active'
                 }
             ];
 
+            // Return published listings if they exist, otherwise return defaults
             return publishedListings.length > 0 ? publishedListings : defaultProperties;
         }
 
@@ -342,12 +344,14 @@
 
         function renderPropertyCard(property) {
             const address = formatPropertyAddress(property.address);
-            const rent = property.unit?.monthlyRent ? `$${parseInt(property.unit.monthlyRent).toLocaleString()}/mo` : '';
+            const unitName = property.unit?.name || '';
+            const displayAddress = unitName ? `${address.street}${unitName ? `, ${unitName}` : ''}` : address.street;
+            const fullAddress = unitName ? `${address.street}, ${unitName}` : address.street;
             
             return `
                 <div 
                     class="property-card-item flex items-center gap-4 p-4 border-b border-zinc-200 last:border-b-0 hover:bg-zinc-50 cursor-pointer transition-colors"
-                    onclick="selectProperty('${property.id}', '${address.street}')"
+                    onclick="selectProperty('${property.id}', '${fullAddress}')"
                 >
                     <div class="flex-shrink-0 w-32 h-24 rounded-md overflow-hidden bg-zinc-100">
                         <img 
@@ -358,8 +362,8 @@
                         >
                     </div>
                     <div class="flex-1 min-w-0">
-                        <h3 class="text-base font-medium text-zinc-900">${address.street}</h3>
-                        <p class="text-sm text-zinc-500 mt-0.5">${address.cityState}</p>
+                        <h3 class="text-base font-medium text-zinc-900">${displayAddress}</h3>
+                        <p class="text-sm text-zinc-500 mt-0.5">${address.cityState || ''}</p>
                     </div>
                 </div>
             `;
@@ -374,7 +378,9 @@
             const term = searchTerm.toLowerCase().trim();
             return properties.filter(property => {
                 const address = property.address?.toLowerCase() || '';
-                return address.includes(term);
+                const unitName = (property.unit?.name || '').toLowerCase();
+                const streetAddress = formatPropertyAddress(property.address).street.toLowerCase();
+                return address.includes(term) || streetAddress.includes(term) || unitName.includes(term);
             });
         }
 
@@ -388,7 +394,7 @@
             
             if (filteredProperties.length === 0) {
                 dropdownContent.innerHTML = `
-                    <div class="p-4 text-center text-sm text-zinc-500 border-b border-zinc-200">
+                    <div class="p-4 text-center text-sm text-zinc-500">
                         No properties found
                     </div>
                 `;
@@ -413,8 +419,27 @@
 
         function selectProperty(propertyId, address) {
             const input = document.getElementById('propertySearchInput');
-            input.value = address;
-            selectedPropertyId = propertyId;
+            // Get the property to extract full details
+            const properties = getAllProperties();
+            const selectedProperty = properties.find(p => p.id === propertyId);
+            
+            if (selectedProperty) {
+                const formattedAddress = formatPropertyAddress(selectedProperty.address);
+                // Set the street address (without unit) in the property input
+                input.value = formattedAddress.street;
+                selectedPropertyId = propertyId;
+                
+                // If property has a unit name, pre-fill the unit input
+                const unitInput = document.getElementById('unitInput');
+                if (unitInput && selectedProperty.unit?.name) {
+                    unitInput.value = selectedProperty.unit.name;
+                }
+            } else {
+                // Fallback to the provided address
+                input.value = address;
+                selectedPropertyId = propertyId;
+            }
+            
             hidePropertyDropdown();
         }
 
@@ -431,8 +456,10 @@
         function createPrivateIssue() {
             const form = document.getElementById('maintenanceForm');
             const propertyInput = document.getElementById('propertySearchInput').value || '';
-            const unitInput = form.querySelector('input[placeholder*="Select unit"]')?.value || '';
+            const unitInput = document.getElementById('unitInput')?.value || '';
             const title = document.getElementById('titleInput').value.trim();
+            const description = document.getElementById('descriptionInput').value.trim();
+            const fileInput = document.getElementById('fileInput');
             
             // Validate required fields
             if (!title) {
@@ -462,6 +489,13 @@
                 streetAddress = `${streetAddress}, ${unitInput}`;
             }
 
+            // Get file information
+            const files = Array.from(fileInput.files).map(file => ({
+                name: file.name,
+                size: file.size,
+                type: file.type
+            }));
+
             const formData = {
                 id: Date.now().toString(),
                 property: propertyAddress,
@@ -470,8 +504,9 @@
                 streetAddress: streetAddress,
                 cityState: cityState,
                 title: title,
-                description: document.getElementById('descriptionInput').value.trim(),
-                files: Array.from(document.getElementById('fileInput').files).map(f => f.name),
+                description: description,
+                files: files,
+                fileCount: files.length,
                 createdAt: new Date().toISOString(),
                 createdDate: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
                 createdBy: 'Rita Noriega',

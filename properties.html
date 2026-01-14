@@ -267,14 +267,20 @@
                 const beds = listing.unit?.beds || '';
                 const baths = listing.unit?.baths || '';
                 const size = listing.unit?.size || '';
-                const hasPhotos = listing.media?.photos > 0;
+                const hasPhotos = listing.media?.photos > 0 || (listing.unit?.photos && listing.unit.photos.length > 0);
+                
+                // Get the first uploaded photo if available
+                const firstPhoto = listing.unit?.photos && listing.unit.photos.length > 0 
+                    ? listing.unit.photos[0].dataUrl 
+                    : null;
+                const photoSrc = firstPhoto || (hasPhotos ? 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&h=600&fit=crop' : '');
 
                 const menuId = `menu-${listing.id}`;
                 
                 propertyCard.innerHTML = `
                     <div class="aspect-video bg-zinc-100 relative overflow-hidden rounded-t-lg">
-                        ${hasPhotos 
-                            ? `<img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&h=600&fit=crop" alt="${streetAddress}" class="w-full h-full object-cover">`
+                        ${photoSrc 
+                            ? `<img src="${photoSrc}" alt="${streetAddress}" class="w-full h-full object-cover">`
                             : ''
                         }
                         <div class="absolute top-2 left-2 px-2 py-0.5 rounded bg-white text-xs font-medium ${listing.status === 'active' ? 'text-emerald-600' : 'text-yellow-600'}">

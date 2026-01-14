@@ -244,6 +244,9 @@
             chevron.classList.toggle('rotate-180');
         }
 
+        // Store uploaded photos
+        let uploadedPhotos = [];
+
         function handlePhotoUpload(event) {
             const files = event.target.files;
             const grid = document.getElementById('photosGrid');
@@ -251,12 +254,22 @@
             if (files.length > 0) {
                 grid.classList.remove('hidden');
                 grid.innerHTML = '';
+                uploadedPhotos = []; // Reset array
                 
                 Array.from(files).forEach((file, index) => {
                     const reader = new FileReader();
                     reader.onload = function(e) {
+                        const photoData = {
+                            name: file.name,
+                            size: file.size,
+                            type: file.type,
+                            dataUrl: e.target.result
+                        };
+                        uploadedPhotos.push(photoData);
+                        
                         const photoDiv = document.createElement('div');
                         photoDiv.className = 'relative group';
+                        photoDiv.setAttribute('data-photo-index', uploadedPhotos.length - 1);
                         photoDiv.innerHTML = `
                             <div class="relative">
                                 <img src="${e.target.result}" alt="Upload ${index + 1}" class="w-full h-32 object-cover rounded-lg border border-zinc-200">
@@ -267,6 +280,9 @@
                             </div>
                         `;
                         grid.appendChild(photoDiv);
+                        
+                        // Save photos to localStorage
+                        savePhotosToStorage();
                     };
                     reader.readAsDataURL(file);
                 });
@@ -274,12 +290,65 @@
         }
 
         function removePhoto(button) {
-            button.closest('.relative.group').remove();
+            const photoDiv = button.closest('.relative.group');
+            const photoIndex = parseInt(photoDiv.getAttribute('data-photo-index'));
+            
+            // Remove from array
+            if (photoIndex >= 0 && photoIndex < uploadedPhotos.length) {
+                uploadedPhotos.splice(photoIndex, 1);
+            }
+            
+            photoDiv.remove();
             const grid = document.getElementById('photosGrid');
             if (grid.children.length === 0) {
                 grid.classList.add('hidden');
             }
+            
+            // Update photo indices
+            Array.from(grid.children).forEach((div, index) => {
+                div.setAttribute('data-photo-index', index);
+            });
+            
+            // Update localStorage
+            savePhotosToStorage();
         }
+
+        function savePhotosToStorage() {
+            const current = ListingStorage.getCurrentListing() || {};
+            if (!current.unit) current.unit = {};
+            if (!current.media) current.media = {};
+            
+            current.media.photos = uploadedPhotos.length;
+            current.unit.photos = uploadedPhotos; // Store photo data with dataUrl
+            ListingStorage.saveCurrentListing(current);
+        }
+
+        // Load existing photos on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedData = ListingStorage.getCurrentListing();
+            if (savedData?.unit?.photos && savedData.unit.photos.length > 0) {
+                uploadedPhotos = savedData.unit.photos;
+                const grid = document.getElementById('photosGrid');
+                grid.classList.remove('hidden');
+                grid.innerHTML = '';
+                
+                uploadedPhotos.forEach((photo, index) => {
+                    const photoDiv = document.createElement('div');
+                    photoDiv.className = 'relative group';
+                    photoDiv.setAttribute('data-photo-index', index);
+                    photoDiv.innerHTML = `
+                        <div class="relative">
+                            <img src="${photo.dataUrl}" alt="Upload ${index + 1}" class="w-full h-32 object-cover rounded-lg border border-zinc-200">
+                            <div class="absolute top-2 left-2 bg-black/50 text-white text-xs px-2 py-1 rounded font-medium">${index + 1}</div>
+                            <button onclick="removePhoto(this)" class="absolute top-2 right-2 p-1 bg-black/50 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+                                <iconify-icon icon="lucide:x" width="14" class="text-white"></iconify-icon>
+                            </button>
+                        </div>
+                    `;
+                    grid.appendChild(photoDiv);
+                });
+            }
+        });
         // Save step 3 data (media)
         function saveStep3Data(event) {
             // Media data is typically handled by file uploads, so we'll save counts

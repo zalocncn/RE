@@ -245,16 +245,25 @@
                 const createdDate = issue.createdDate || new Date(issue.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
                 const createdBy = issue.createdBy || 'Rita Noriega';
                 const isPrivate = issue.isPrivate !== false; // Default to true
+                const hasDescription = issue.description && issue.description.trim().length > 0;
+                const hasFiles = issue.files && issue.files.length > 0;
                 
                 issueCard.innerHTML = `
                     <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
                         <!-- Left Side - Issue Details -->
                         <div class="flex-1">
                             <h3 class="text-lg font-bold text-zinc-900 mb-2">${issue.title || 'Untitled Issue'}</h3>
-                            <div class="flex items-center gap-2 text-sm text-zinc-600">
+                            <div class="flex items-center gap-2 text-sm text-zinc-600 mb-2">
                                 ${isPrivate ? '<iconify-icon icon="lucide:eye" width="16" class="text-zinc-400"></iconify-icon>' : ''}
                                 <span>${isPrivate ? 'Internal private' : 'Public'} issue created on ${createdDate} by ${createdBy}${createdBy === 'Rita Noriega' ? ' (you)' : ''}</span>
                             </div>
+                            ${hasDescription ? `<p class="text-sm text-zinc-600 mb-2 line-clamp-2">${issue.description}</p>` : ''}
+                            ${hasFiles ? `
+                                <div class="flex items-center gap-2 text-sm text-zinc-500 mt-2">
+                                    <iconify-icon icon="lucide:paperclip" width="14" class="text-zinc-400"></iconify-icon>
+                                    <span>${issue.fileCount || issue.files.length} file${(issue.fileCount || issue.files.length) !== 1 ? 's' : ''} attached</span>
+                                </div>
+                            ` : ''}
                         </div>
 
                         <!-- Right Side - Property Address -->
