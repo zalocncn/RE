@@ -19,6 +19,32 @@ const ListingStorage = {
         return data ? JSON.parse(data) : [];
     },
 
+    // Get a specific listing by ID
+    getListingById(id) {
+        const listings = this.getAllListings();
+        return listings.find(listing => listing.id === id) || null;
+    },
+
+    // Update an existing listing
+    updateListing(listingId, updatedData) {
+        const listings = this.getAllListings();
+        const index = listings.findIndex(listing => listing.id === listingId);
+        if (index !== -1) {
+            const originalListing = listings[index];
+            listings[index] = {
+                ...originalListing,
+                ...updatedData,
+                id: listingId, // Preserve the original ID
+                publishedAt: originalListing.publishedAt || updatedData.publishedAt, // Preserve original publish date
+                status: originalListing.status || updatedData.status || 'active', // Preserve original status
+                updatedAt: new Date().toISOString() // Add update timestamp
+            };
+            localStorage.setItem('publishedListings', JSON.stringify(listings));
+            return listings[index];
+        }
+        return null;
+    },
+
     // Save a published listing
     saveListing(listing) {
         const listings = this.getAllListings();

@@ -10,20 +10,39 @@
     <link rel="stylesheet" href="css/base.css">
     <script src="js/listing-storage.js"></script>
     <script>
+        // Get listing ID from URL parameters
+        function getListingIdFromUrl() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('id');
+        }
+
         // Load and display saved data from steps 1-5 when page loads
         function loadReviewData() {
-            const savedData = ListingStorage.getCurrentListing();
+            // Check if we're editing an existing listing
+            const listingId = getListingIdFromUrl();
+            let savedData = null;
+
+            if (listingId) {
+                // Load the specific listing from published listings
+                savedData = ListingStorage.getListingById(listingId);
+                if (savedData) {
+                    // Set it as the current listing so the form can display it
+                    ListingStorage.saveCurrentListing(savedData);
+                    // Store the listing ID for later use when saving
+                    sessionStorage.setItem('editingListingId', listingId);
+                } else {
+                    console.log('Listing not found with ID:', listingId);
+                    // Fall back to current listing or defaults
+                    savedData = ListingStorage.getCurrentListing();
+                }
+            } else {
+                // Normal flow: get current listing from steps 1-5
+                savedData = ListingStorage.getCurrentListing();
+            }
+
             if (!savedData) {
                 console.log('No saved data found, using defaults');
                 return;
-            }
-
-            // Update address header
-            if (savedData.address) {
-                const addressHeader = document.querySelector('p.text-sm.text-zinc-500.uppercase');
-                if (addressHeader) {
-                    addressHeader.textContent = savedData.address.toUpperCase();
-                }
             }
 
             // Update Basics section
@@ -210,6 +229,23 @@
 
         // Load data when page loads
         document.addEventListener('DOMContentLoaded', function() {
+            // Check if we're editing an existing listing first
+            const listingId = getListingIdFromUrl();
+            
+            // Update button text and page title if editing
+            if (listingId) {
+                const buttonText = document.getElementById('publishButtonText');
+                if (buttonText) {
+                    buttonText.textContent = 'Update Rental';
+                }
+                // Update page title
+                const pageTitle = document.querySelector('h1');
+                if (pageTitle) {
+                    pageTitle.textContent = 'Edit Rental';
+                }
+            }
+            
+            // Load review data (this will load the listing if editing)
             loadReviewData();
             
             // Clear the creatingListing flag after page loads (it was only needed during navigation)
@@ -322,11 +358,6 @@
     <main class="md:ml-64 pt-14 min-h-screen bg-zinc-50">
         <div class="p-6">
             <div class="max-w-5xl mx-auto">
-                <!-- Address Header -->
-                <div class="mb-6">
-                    <p class="text-sm text-zinc-500 uppercase tracking-wide">214 VIA ROBINA, SAN CLEMENTE, CA 92672</p>
-                </div>
-
                 <!-- Main Form Card -->
                 <div class="bg-white rounded-lg border border-zinc-200 shadow-sm p-8">
                     <div class="mb-8">
@@ -509,7 +540,7 @@
                             Previous
                         </a>
                         <button id="createRentalButton" onclick="publishListing()" class="px-6 py-2.5 rounded-md bg-emerald-600 text-white font-medium text-sm hover:bg-emerald-700 transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-emerald-600" disabled>
-                            Create Rental
+                            <span id="publishButtonText">Create Rental</span>
                             <iconify-icon icon="lucide:check" width="16"></iconify-icon>
                         </button>
                     </div>
@@ -576,7 +607,7 @@
             
             // Always extract current values from review page to ensure we have the latest data
             // This ensures that any updates made on the review page are captured
-            const addressHeader = document.querySelector('p.text-sm.text-zinc-500.uppercase')?.textContent?.trim() || listingData.address || '214 VIA ROBINA, SAN CLEMENTE, CA 92672';
+            const addressHeader = listingData.address || '';
             
             // Extract unit details from Basics section
             const basicsSection = document.querySelector('h2.text-lg.font-medium')?.closest('.border');
@@ -694,20 +725,34 @@
                 }
             };
 
-            // Ensure required fields are set
-            if (!listingData.address) {
-                listingData.address = document.querySelector('p.text-sm.text-zinc-500.uppercase')?.textContent?.trim() || '214 VIA ROBINA, SAN CLEMENTE, CA 92672';
-            }
-            if (!listingData.publishedAt) {
-                listingData.publishedAt = new Date().toISOString();
-            }
-            if (!listingData.status) {
-                listingData.status = 'active';
-            }
+            // Check if we're updating an existing listing or creating a new one
+            const editingListingId = sessionStorage.getItem('editingListingId');
+            
+            let savedListing;
+            if (editingListingId) {
+                // Update existing listing
+                savedListing = ListingStorage.updateListing(editingListingId, listingData);
+                console.log('Rental updated successfully!', savedListing);
+                // Clear the editing flag
+                sessionStorage.removeItem('editingListingId');
+            } else {
+                // Create new listing
+                // Ensure required fields are set
+                if (!listingData.address) {
+                    listingData.address = listingData.address || '';
+                }
+                if (!listingData.publishedAt) {
+                    listingData.publishedAt = new Date().toISOString();
+                }
+                if (!listingData.status) {
+                    listingData.status = 'active';
+                }
 
-            // Save to localStorage using ListingStorage utility for consistency
-            // ListingStorage.saveListing() will automatically add id, publishedAt, and status
-            const savedListing = ListingStorage.saveListing(listingData);
+                // Save to localStorage using ListingStorage utility for consistency
+                // ListingStorage.saveListing() will automatically add id, publishedAt, and status
+                savedListing = ListingStorage.saveListing(listingData);
+                console.log('Rental created successfully!', savedListing);
+            }
             
             // Clear any temporary listing data
             ListingStorage.clearCurrentListing();
@@ -715,11 +760,8 @@
             // Clear the creatingListing flag since we successfully completed the flow
             sessionStorage.removeItem('creatingListing');
             
-            // Show success message
-            console.log('Rental created successfully!', savedListing);
-            
-            // Redirect to properties page to see the new rental
-            // The properties page will automatically load and display the new rental
+            // Redirect to properties page to see the new/updated rental
+            // The properties page will automatically load and display the rental
             window.location.href = 'properties.html';
         }
 
