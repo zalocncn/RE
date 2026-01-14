@@ -362,12 +362,16 @@
                 input.previousElementSibling?.textContent?.toLowerCase().includes('parking fee')
             );
 
+            // Separate pets from other amenities
+            const petAmenities = selectedAmenities.filter(a => a === 'Cats' || a === 'Dogs');
+            const nonPetAmenities = selectedAmenities.filter(a => a !== 'Cats' && a !== 'Dogs');
+
             const step2Data = {
-                propertyAmenities: selectedAmenities.filter(a => 
+                propertyAmenities: nonPetAmenities.filter(a => 
                     !['Washer/Dryer', 'Laundry', 'Gas', 'Water', 'Electricity', 'Heat', 'Trash', 'Sewer', 'Cable', 'Air Conditioning'].some(term => a.includes(term))
                 ),
-                laundry: selectedAmenities.filter(a => a.includes('Washer') || a.includes('Laundry')),
-                utilities: selectedAmenities.filter(a => 
+                laundry: nonPetAmenities.filter(a => a.includes('Washer') || a.includes('Laundry')),
+                utilities: nonPetAmenities.filter(a => 
                     ['Gas', 'Water', 'Electricity', 'Heat', 'Trash Removal', 'Sewer', 'Cable', 'Air Conditioning'].some(term => a.includes(term))
                 ),
                 parking: {
@@ -375,7 +379,9 @@
                     fee: parkingFeeInput?.value || ''
                 },
                 pets: {
-                    allowed: form.querySelector('input[name="pets"]')?.checked || false,
+                    allowed: petAmenities.length > 0,
+                    cats: petAmenities.includes('Cats'),
+                    dogs: petAmenities.includes('Dogs'),
                     type: form.querySelector('select')?.value || ''
                 }
             };

@@ -100,16 +100,86 @@
                 }
             }
 
-            // Update Amenities section
-            if (savedData.unit?.amenities && savedData.unit.amenities.length > 0) {
-                const amenitiesSection = document.querySelectorAll('h2.text-lg.font-medium');
-                const unitAmenitiesSection = Array.from(amenitiesSection).find(h => 
-                    h.textContent === 'Amenities' && !h.nextElementSibling?.textContent?.includes('Property Amenities')
-                )?.closest('.border');
-                if (unitAmenitiesSection) {
-                    const amenitiesText = unitAmenitiesSection.querySelector('p.text-sm.text-zinc-500');
-                    if (amenitiesText && Array.isArray(savedData.unit.amenities)) {
-                        amenitiesText.textContent = savedData.unit.amenities.join(', ');
+            // Update Amenities section - combine all amenities from Step 2
+            const amenitiesSection = Array.from(document.querySelectorAll('h2.text-lg.font-medium')).find(h => 
+                h.textContent === 'Amenities' && !h.nextElementSibling?.textContent?.includes('Property Amenities')
+            )?.closest('.border');
+            
+            if (amenitiesSection) {
+                const amenitiesList = document.getElementById('amenitiesList');
+                const parkingType = document.getElementById('parkingType');
+                const parkingCost = document.getElementById('parkingCost');
+                
+                if (amenitiesList) {
+                    // Collect all amenities from Step 2 (excluding parking, which is shown separately)
+                    const allAmenities = [];
+                    
+                    // Parking type values to exclude from amenities list
+                    const parkingTypes = ['Garage', 'Covered', 'Open Lot', 'Street', 'Valet', 'Select'];
+                    
+                    // Property amenities (general amenities)
+                    if (savedData.propertyAmenities && Array.isArray(savedData.propertyAmenities) && savedData.propertyAmenities.length > 0) {
+                        // Filter out any parking types that might have been incorrectly included
+                        const filteredPropertyAmenities = savedData.propertyAmenities.filter(a => 
+                            !parkingTypes.includes(a.trim())
+                        );
+                        allAmenities.push(...filteredPropertyAmenities);
+                    }
+                    
+                    // Laundry amenities
+                    if (savedData.laundry && Array.isArray(savedData.laundry) && savedData.laundry.length > 0) {
+                        allAmenities.push(...savedData.laundry);
+                    }
+                    
+                    // Utilities
+                    if (savedData.utilities && Array.isArray(savedData.utilities) && savedData.utilities.length > 0) {
+                        allAmenities.push(...savedData.utilities);
+                    }
+                    
+                    // Pets (only show Cats/Dogs, exclude parking type)
+                    if (savedData.pets) {
+                        if (savedData.pets.allowed || savedData.pets.cats || savedData.pets.dogs) {
+                            const petTypes = [];
+                            // Check for pet checkboxes (Cats/Dogs only)
+                            if (savedData.pets.cats) petTypes.push('Cats');
+                            if (savedData.pets.dogs) petTypes.push('Dogs');
+                            // Don't include pets.type as it might be confused with parking type
+                            if (petTypes.length > 0) {
+                                allAmenities.push(`Pets Allowed (${petTypes.join(', ')})`);
+                            } else {
+                                allAmenities.push('Pets Allowed');
+                            }
+                        }
+                    }
+                    
+                    // Fallback to unit amenities if no Step 2 amenities found
+                    if (allAmenities.length === 0 && savedData.unit?.amenities && Array.isArray(savedData.unit.amenities) && savedData.unit.amenities.length > 0) {
+                        allAmenities.push(...savedData.unit.amenities);
+                    }
+                    
+                    // Display amenities or show "-" if none
+                    if (allAmenities.length > 0) {
+                        amenitiesList.textContent = allAmenities.join(', ');
+                    } else {
+                        amenitiesList.textContent = '-';
+                    }
+                }
+                
+                // Display parking type separately
+                if (parkingType) {
+                    if (savedData.parking && savedData.parking.type && savedData.parking.type !== 'Select' && savedData.parking.type !== '') {
+                        parkingType.textContent = savedData.parking.type;
+                    } else {
+                        parkingType.textContent = '-';
+                    }
+                }
+                
+                // Display parking cost separately
+                if (parkingCost) {
+                    if (savedData.parking && savedData.parking.fee && savedData.parking.fee !== '' && savedData.parking.fee !== '0') {
+                        parkingCost.textContent = `$${savedData.parking.fee}/mo`;
+                    } else {
+                        parkingCost.textContent = '-';
                     }
                 }
             }
@@ -452,9 +522,22 @@
                             <div class="border border-zinc-200 rounded-lg p-6">
                                 <div class="flex items-start justify-between mb-4">
                                     <h2 class="text-lg font-medium text-zinc-900">Amenities</h2>
-                                    <a href="create-listing.html" class="text-sm text-emerald-600 hover:text-emerald-700 font-medium">Edit Section</a>
+                                    <a href="create-listing-step2.html" class="text-sm text-emerald-600 hover:text-emerald-700 font-medium">Edit Section</a>
                                 </div>
-                                <p class="text-sm text-zinc-500">Mud Room, Recreation Room, Vinyl Flooring</p>
+                                <div class="space-y-3">
+                                    <div>
+                                        <p class="text-sm font-medium text-zinc-700 mb-1">Amenities</p>
+                                        <p class="text-sm text-zinc-500" id="amenitiesList">Mud Room, Recreation Room, Vinyl Flooring</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm font-medium text-zinc-700 mb-1">Parking Type</p>
+                                        <p class="text-sm text-zinc-500" id="parkingType">-</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm font-medium text-zinc-700 mb-1">Parking Cost</p>
+                                        <p class="text-sm text-zinc-500" id="parkingCost">-</p>
+                                    </div>
+                                </div>
                             </div>
 
                             <!-- Description Section -->
@@ -648,11 +731,13 @@
                 }
             }
             
-            // Extract unit amenities
-            const amenitiesSections = Array.from(document.querySelectorAll('h2.text-lg.font-medium'));
-            const unitAmenitiesSection = amenitiesSections.find(h => h.textContent === 'Amenities' && !h.nextElementSibling?.textContent?.includes('Property Amenities'))?.closest('.border');
-            const unitAmenitiesText = unitAmenitiesSection?.querySelector('p.text-sm.text-zinc-500')?.textContent || '';
-            const unitAmenities = unitAmenitiesText ? unitAmenitiesText.split(',').map(a => a.trim()) : (listingData.unit?.amenities || []);
+            // Preserve Step 2 amenities (propertyAmenities, laundry, utilities, parking, pets)
+            // Don't extract from review page text as it's already formatted for display
+            const propertyAmenities = listingData.propertyAmenities || [];
+            const laundry = listingData.laundry || [];
+            const utilities = listingData.utilities || [];
+            const parking = listingData.parking || {};
+            const pets = listingData.pets || {};
             
             // Extract media info
             const mediaSection = amenitiesSections.find(h => h.textContent === 'Media')?.closest('.border');
@@ -692,7 +777,7 @@
                     monthlyRent: monthlyRent,
                     deposit: deposit,
                     leaseLength: leaseLength,
-                    amenities: unitAmenities,
+                    amenities: listingData.unit?.amenities || [], // Unit-specific amenities (from Step 1)
                     description: listingData.unit?.description || '',
                     photos: listingData.unit?.photos || [] // Preserve uploaded photos
                 },
@@ -700,6 +785,12 @@
                     ...listingData.building,
                     yearBuilt: yearBuilt
                 },
+                // Preserve Step 2 amenities
+                propertyAmenities: propertyAmenities,
+                laundry: laundry,
+                utilities: utilities,
+                parking: parking,
+                pets: pets,
                 media: {
                     ...listingData.media,
                     photos: parseInt(photosCount),
