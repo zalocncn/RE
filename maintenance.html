@@ -240,7 +240,10 @@
             // Render each issue
             filteredIssues.forEach(issue => {
                 const issueCard = document.createElement('div');
-                issueCard.className = 'bg-white rounded-lg border border-zinc-200 shadow-sm p-6 hover:shadow-md transition-shadow';
+                issueCard.className = 'bg-white rounded-lg border border-zinc-200 shadow-sm p-6 hover:shadow-md transition-shadow cursor-pointer';
+                issueCard.onclick = function() {
+                    window.location.href = `maintenance-detail.html?id=${issue.id}`;
+                };
                 
                 const createdDate = issue.createdDate || new Date(issue.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
                 const createdBy = issue.createdBy || 'Rita Noriega';
@@ -312,7 +315,15 @@
                     createdDate: 'Jan 13, 2026',
                     createdBy: 'Rita Noriega',
                     status: 'open',
-                    isPrivate: true
+                    isPrivate: true,
+                    privateNotes: [{
+                        text: 'private details',
+                        author: 'Rita Noriega',
+                        createdAt: new Date('2026-01-13T09:10:00').toISOString(),
+                        date: 'Jan 13, 2026',
+                        time: '9:10 AM',
+                        files: []
+                    }]
                 };
                 localStorage.setItem('maintenanceIssues', JSON.stringify([defaultIssue]));
             }

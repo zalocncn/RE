@@ -151,9 +151,9 @@
                         </div>
 
                         <div class="flex justify-end">
-                            <a href="leases.html" class="px-4 py-2 rounded-md bg-emerald-600 text-white font-medium text-sm hover:bg-emerald-700 transition-colors">
-                                Cancel
-                            </a>
+                            <button id="continueButton" onclick="continueToPayments()" class="px-4 py-2 rounded-md bg-zinc-300 text-zinc-500 font-medium text-sm cursor-not-allowed transition-colors" disabled>
+                                Continue
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -303,6 +303,48 @@
             // Store selected property ID for later use
             sessionStorage.setItem('selectedPropertyId', propertyId);
             sessionStorage.setItem('selectedPropertyAddress', address);
+            
+            // Save resident setup data for this property
+            saveResidentSetupData(propertyId, address);
+            
+            // Enable Continue button
+            const continueButton = document.getElementById('continueButton');
+            if (continueButton) {
+                continueButton.disabled = false;
+                continueButton.classList.remove('bg-zinc-300', 'text-zinc-500', 'cursor-not-allowed');
+                continueButton.classList.add('bg-emerald-600', 'text-white', 'hover:bg-emerald-700', 'cursor-pointer');
+            }
+        }
+
+        // Save resident setup data for property
+        function saveResidentSetupData(propertyId, address) {
+            const residentData = JSON.parse(localStorage.getItem('propertyResidents') || '{}');
+            
+            residentData[propertyId] = {
+                propertyId: propertyId,
+                propertyAddress: address,
+                setupDate: new Date().toISOString(),
+                status: 'setup_in_progress'
+            };
+
+            localStorage.setItem('propertyResidents', JSON.stringify(residentData));
+        }
+
+        // Continue to payments setup
+        function continueToPayments() {
+            const propertyId = sessionStorage.getItem('selectedPropertyId');
+            const propertyAddress = sessionStorage.getItem('selectedPropertyAddress');
+            
+            if (!propertyId) {
+                alert('Please select a property first.');
+                return;
+            }
+
+            // Ensure resident setup data is saved
+            saveResidentSetupData(propertyId, propertyAddress);
+            
+            // Navigate to payments setup
+            window.location.href = `set-up-payments.html?propertyId=${propertyId}`;
         }
 
         // Close dropdown when clicking outside
@@ -317,6 +359,26 @@
 
         // Load properties when page loads
         document.addEventListener('DOMContentLoaded', function() {
+            // Check if property is already selected
+            const propertyId = sessionStorage.getItem('selectedPropertyId');
+            const propertyAddress = sessionStorage.getItem('selectedPropertyAddress');
+            
+            if (propertyId && propertyAddress) {
+                const input = document.getElementById('propertySearchInput');
+                const addressParts = formatPropertyAddress(propertyAddress);
+                if (input) {
+                    input.value = addressParts.street;
+                }
+                
+                // Enable Continue button
+                const continueButton = document.getElementById('continueButton');
+                if (continueButton) {
+                    continueButton.disabled = false;
+                    continueButton.classList.remove('bg-zinc-300', 'text-zinc-500', 'cursor-not-allowed');
+                    continueButton.classList.add('bg-emerald-600', 'text-white', 'hover:bg-emerald-700', 'cursor-pointer');
+                }
+            }
+            
             // Listen for storage changes to update dropdown (cross-tab)
             window.addEventListener('storage', function(e) {
                 if (e.key === 'publishedListings') {
