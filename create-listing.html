@@ -190,7 +190,7 @@
                                     <!-- Unit Name -->
                                     <div>
                                         <label class="flex items-center gap-1 text-sm font-medium text-zinc-900 mb-2">
-                                            <span># / Name</span>
+                                            <span>Street Address</span>
                                             <iconify-icon icon="lucide:info" width="14" class="text-zinc-400"></iconify-icon>
                                         </label>
                                         <input type="text" id="unitName" class="w-full px-4 py-2 rounded-md border border-zinc-200 bg-white text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent" oninput="saveUnitData(); validateForm();">
@@ -1127,6 +1127,24 @@
             return isValid;
         }
 
+        // Clear all form fields
+        function clearFormFields() {
+            document.getElementById('unitName').value = '';
+            document.getElementById('dateAvailable').value = '';
+            document.getElementById('beds').value = '';
+            document.getElementById('baths').value = 'Select';
+            document.getElementById('size').value = '';
+            document.getElementById('monthlyRent').value = '';
+            document.getElementById('deposit').value = '';
+            document.getElementById('leaseLength').value = '12';
+            document.getElementById('yearBuilt').value = '';
+            const showListingCheckbox = document.getElementById('show-listing');
+            if (showListingCheckbox) {
+                showListingCheckbox.checked = false;
+                toggleShowListing();
+            }
+        }
+
         // Validate and continue to next step
         function validateAndContinue() {
             console.log('validateAndContinue called');
@@ -1136,6 +1154,8 @@
             if (isValid) {
                 console.log('Saving step 1 data...');
                 saveStep1Data();
+                // Set flag to indicate we're navigating to next step (don't clear data)
+                sessionStorage.setItem('creatingListing', 'true');
                 console.log('Navigating to step 2...');
                 window.location.href = 'create-listing-step2.html';
             } else {
@@ -1227,6 +1247,21 @@
             }
             // Validate form after loading saved data
             validateForm();
+            
+            // Clear the creatingListing flag after page loads (it was only needed during navigation)
+            setTimeout(() => {
+                sessionStorage.removeItem('creatingListing');
+            }, 100);
+        });
+
+        // Clear form data when navigating away (unless going to next step)
+        window.addEventListener('beforeunload', function(e) {
+            // Only clear if not navigating to next step in the flow
+            const isCreatingListing = sessionStorage.getItem('creatingListing');
+            if (!isCreatingListing) {
+                // Clear form fields and localStorage
+                ListingStorage.clearCurrentListing();
+            }
         });
 
         // Save step 1 data before navigating to next step

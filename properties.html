@@ -122,61 +122,59 @@
             </div>
 
             <!-- Properties Overview -->
-            <div class="border border-zinc-100 rounded-lg overflow-hidden bg-white">
-                <div class="bg-zinc-50/50 px-4 py-3 border-b border-zinc-100 flex justify-between items-center">
+            <div class="border border-zinc-100 rounded-lg bg-white">
+                <div class="bg-zinc-50/50 px-4 py-3 border-b border-zinc-100 flex justify-between items-center rounded-t-lg">
                     <span class="text-sm font-medium text-zinc-900">Your Properties</span>
                 </div>
                 <div class="p-4">
                     <div id="propertiesGrid" class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <!-- Properties will be loaded dynamically -->
-                        <div class="border border-zinc-100 rounded-lg overflow-hidden hover:shadow-md transition-all relative">
-                            <div class="aspect-video bg-zinc-100 relative">
+                        <div class="border border-zinc-100 rounded-lg hover:shadow-md transition-all relative">
+                            <div class="aspect-video bg-zinc-100 relative overflow-hidden rounded-t-lg">
                                 <div class="absolute top-2 left-2 px-2 py-0.5 rounded bg-white text-xs font-medium text-zinc-600">Active</div>
                                 <button onclick="togglePropertyMenu('default-1')" class="absolute top-2 right-2 w-8 h-8 bg-emerald-600 rounded-md flex items-center justify-center hover:bg-emerald-700 transition-colors z-10">
                                     <iconify-icon icon="lucide:more-horizontal" width="16" class="text-white"></iconify-icon>
                                 </button>
-                                <div id="menu-default-1" class="hidden absolute top-10 right-2 bg-white rounded-lg shadow-lg border border-zinc-200 z-50 min-w-[200px] py-1">
-                                    <a href="#" class="block px-4 py-2 text-sm text-zinc-900 hover:bg-zinc-50 transition-colors">Edit Listing</a>
-                                    <a href="#" class="block px-4 py-2 text-sm text-zinc-900 hover:bg-zinc-50 transition-colors">Edit Property</a>
-                                    <a href="#" class="block px-4 py-2 text-sm text-zinc-900 hover:bg-zinc-50 transition-colors">Applications</a>
-                                    <a href="#" class="block px-4 py-2 text-sm text-zinc-900 hover:bg-zinc-50 transition-colors">Residents</a>
-                                    <a href="#" class="block px-4 py-2 text-sm text-zinc-900 hover:bg-zinc-50 transition-colors">Payments</a>
-                                    <a href="#" class="block px-4 py-2 text-sm text-zinc-900 hover:bg-zinc-50 transition-colors">Invite to Apply</a>
-                                    <a href="#" class="block px-4 py-2 text-sm text-zinc-900 hover:bg-zinc-50 transition-colors">Generate Rent Comp Report</a>
-                                    <div class="border-t border-zinc-200 my-1"></div>
-                                    <a href="#" class="block px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors">Delete Property</a>
-                                </div>
+                            </div>
+                            <div id="menu-default-1" class="hidden absolute top-10 right-2 bg-white rounded-lg shadow-lg border border-zinc-200 z-50 min-w-[200px] py-1">
+                                <a href="#" class="block px-4 py-2 text-sm text-zinc-900 hover:bg-zinc-50 transition-colors">Edit Listing</a>
+                                <a href="#" class="block px-4 py-2 text-sm text-zinc-900 hover:bg-zinc-50 transition-colors">Edit Property</a>
+                                <a href="#" class="block px-4 py-2 text-sm text-zinc-900 hover:bg-zinc-50 transition-colors">Applications</a>
+                                <a href="#" class="block px-4 py-2 text-sm text-zinc-900 hover:bg-zinc-50 transition-colors">Residents</a>
+                                <a href="#" class="block px-4 py-2 text-sm text-zinc-900 hover:bg-zinc-50 transition-colors">Payments</a>
+                                <a href="#" class="block px-4 py-2 text-sm text-zinc-900 hover:bg-zinc-50 transition-colors">Invite to Apply</a>
+                                <a href="#" class="block px-4 py-2 text-sm text-zinc-900 hover:bg-zinc-50 transition-colors">Generate Rent Comp Report</a>
+                                <div class="border-t border-zinc-200 my-1"></div>
+                                <a href="#" class="block px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors">Delete Property</a>
                             </div>
                             <div class="p-4">
                                 <h3 class="text-sm font-medium text-zinc-900 mb-1">123 Main Street</h3>
-                                <p class="text-xs text-zinc-500 mb-3">Los Angeles, CA 90001</p>
                                 <div class="flex items-center justify-between text-xs">
                                     <span class="text-zinc-500">1 Unit</span>
                                     <span class="text-emerald-600 font-medium">$1,800/mo</span>
                                 </div>
                             </div>
                         </div>
-                        <div class="border border-zinc-100 rounded-lg overflow-hidden hover:shadow-md transition-all relative">
-                            <div class="aspect-video bg-zinc-100 relative">
+                        <div class="border border-zinc-100 rounded-lg hover:shadow-md transition-all relative">
+                            <div class="aspect-video bg-zinc-100 relative overflow-hidden rounded-t-lg">
                                 <div class="absolute top-2 left-2 px-2 py-0.5 rounded bg-white text-xs font-medium text-yellow-600">Vacant</div>
                                 <button onclick="togglePropertyMenu('default-2')" class="absolute top-2 right-2 w-8 h-8 bg-emerald-600 rounded-md flex items-center justify-center hover:bg-emerald-700 transition-colors z-10">
                                     <iconify-icon icon="lucide:more-horizontal" width="16" class="text-white"></iconify-icon>
                                 </button>
-                                <div id="menu-default-2" class="hidden absolute top-10 right-2 bg-white rounded-lg shadow-lg border border-zinc-200 z-50 min-w-[200px] py-1">
-                                    <a href="#" class="block px-4 py-2 text-sm text-zinc-900 hover:bg-zinc-50 transition-colors">Edit Listing</a>
-                                    <a href="#" class="block px-4 py-2 text-sm text-zinc-900 hover:bg-zinc-50 transition-colors">Edit Property</a>
-                                    <a href="#" class="block px-4 py-2 text-sm text-zinc-900 hover:bg-zinc-50 transition-colors">Applications</a>
-                                    <a href="#" class="block px-4 py-2 text-sm text-zinc-900 hover:bg-zinc-50 transition-colors">Residents</a>
-                                    <a href="#" class="block px-4 py-2 text-sm text-zinc-900 hover:bg-zinc-50 transition-colors">Payments</a>
-                                    <a href="#" class="block px-4 py-2 text-sm text-zinc-900 hover:bg-zinc-50 transition-colors">Invite to Apply</a>
-                                    <a href="#" class="block px-4 py-2 text-sm text-zinc-900 hover:bg-zinc-50 transition-colors">Generate Rent Comp Report</a>
-                                    <div class="border-t border-zinc-200 my-1"></div>
-                                    <a href="#" class="block px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors">Delete Property</a>
-                                </div>
+                            </div>
+                            <div id="menu-default-2" class="hidden absolute top-10 right-2 bg-white rounded-lg shadow-lg border border-zinc-200 z-50 min-w-[200px] py-1">
+                                <a href="#" class="block px-4 py-2 text-sm text-zinc-900 hover:bg-zinc-50 transition-colors">Edit Listing</a>
+                                <a href="#" class="block px-4 py-2 text-sm text-zinc-900 hover:bg-zinc-50 transition-colors">Edit Property</a>
+                                <a href="#" class="block px-4 py-2 text-sm text-zinc-900 hover:bg-zinc-50 transition-colors">Applications</a>
+                                <a href="#" class="block px-4 py-2 text-sm text-zinc-900 hover:bg-zinc-50 transition-colors">Residents</a>
+                                <a href="#" class="block px-4 py-2 text-sm text-zinc-900 hover:bg-zinc-50 transition-colors">Payments</a>
+                                <a href="#" class="block px-4 py-2 text-sm text-zinc-900 hover:bg-zinc-50 transition-colors">Invite to Apply</a>
+                                <a href="#" class="block px-4 py-2 text-sm text-zinc-900 hover:bg-zinc-50 transition-colors">Generate Rent Comp Report</a>
+                                <div class="border-t border-zinc-200 my-1"></div>
+                                <a href="#" class="block px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors">Delete Property</a>
                             </div>
                             <div class="p-4">
                                 <h3 class="text-sm font-medium text-zinc-900 mb-1">456 Oak Avenue</h3>
-                                <p class="text-xs text-zinc-500 mb-3">San Diego, CA 92101</p>
                                 <div class="flex items-center justify-between text-xs">
                                     <span class="text-zinc-500">1 Unit</span>
                                     <span class="text-zinc-400">$2,100/mo</span>
@@ -256,7 +254,7 @@
             // Add each saved listing
             listings.forEach(listing => {
                 const propertyCard = document.createElement('div');
-                propertyCard.className = 'border border-zinc-100 rounded-lg overflow-hidden hover:shadow-md transition-all relative';
+                propertyCard.className = 'border border-zinc-100 rounded-lg hover:shadow-md transition-all relative';
                 
                 const addressParts = listing.address.split(',');
                 const streetAddress = addressParts[0]?.trim() || listing.address;
@@ -274,7 +272,7 @@
                 const menuId = `menu-${listing.id}`;
                 
                 propertyCard.innerHTML = `
-                    <div class="aspect-video bg-zinc-100 relative">
+                    <div class="aspect-video bg-zinc-100 relative overflow-hidden rounded-t-lg">
                         ${hasPhotos 
                             ? `<img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&h=600&fit=crop" alt="${streetAddress}" class="w-full h-full object-cover">`
                             : ''
@@ -285,23 +283,22 @@
                         <button onclick="togglePropertyMenu('${listing.id}')" class="absolute top-2 right-2 w-8 h-8 bg-emerald-600 rounded-md flex items-center justify-center hover:bg-emerald-700 transition-colors z-10">
                             <iconify-icon icon="lucide:more-horizontal" width="16" class="text-white"></iconify-icon>
                         </button>
-                        <div id="${menuId}" class="hidden absolute top-10 right-2 bg-white rounded-lg shadow-lg border border-zinc-200 z-50 min-w-[200px] py-1">
-                            <a href="create-listing-step6.html" class="block px-4 py-2 text-sm text-zinc-900 hover:bg-zinc-50 transition-colors">Edit Listing</a>
-                            <a href="#" class="block px-4 py-2 text-sm text-zinc-900 hover:bg-zinc-50 transition-colors">Edit Property</a>
-                            <a href="applications.html" class="block px-4 py-2 text-sm text-zinc-900 hover:bg-zinc-50 transition-colors">Applications</a>
-                            <a href="leases.html" class="block px-4 py-2 text-sm text-zinc-900 hover:bg-zinc-50 transition-colors">Residents</a>
-                            <a href="payments.html" class="block px-4 py-2 text-sm text-zinc-900 hover:bg-zinc-50 transition-colors">Payments</a>
-                            <a href="#" class="block px-4 py-2 text-sm text-zinc-900 hover:bg-zinc-50 transition-colors">Invite to Apply</a>
-                            <a href="#" class="block px-4 py-2 text-sm text-zinc-900 hover:bg-zinc-50 transition-colors">Generate Rent Comp Report</a>
-                            <div class="border-t border-zinc-200 my-1"></div>
-                            <a href="#" onclick="deleteProperty('${listing.id}'); return false;" class="block px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors">Delete Property</a>
-                        </div>
+                    </div>
+                    <div id="${menuId}" class="hidden absolute top-10 right-2 bg-white rounded-lg shadow-lg border border-zinc-200 z-50 min-w-[200px] py-1">
+                        <a href="create-listing-step6.html" class="block px-4 py-2 text-sm text-zinc-900 hover:bg-zinc-50 transition-colors">Edit Listing</a>
+                        <a href="#" class="block px-4 py-2 text-sm text-zinc-900 hover:bg-zinc-50 transition-colors">Edit Property</a>
+                        <a href="applications.html" class="block px-4 py-2 text-sm text-zinc-900 hover:bg-zinc-50 transition-colors">Applications</a>
+                        <a href="leases.html" class="block px-4 py-2 text-sm text-zinc-900 hover:bg-zinc-50 transition-colors">Residents</a>
+                        <a href="payments.html" class="block px-4 py-2 text-sm text-zinc-900 hover:bg-zinc-50 transition-colors">Payments</a>
+                        <a href="#" class="block px-4 py-2 text-sm text-zinc-900 hover:bg-zinc-50 transition-colors">Invite to Apply</a>
+                        <a href="#" class="block px-4 py-2 text-sm text-zinc-900 hover:bg-zinc-50 transition-colors">Generate Rent Comp Report</a>
+                        <div class="border-t border-zinc-200 my-1"></div>
+                        <a href="#" onclick="deleteProperty('${listing.id}'); return false;" class="block px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors">Delete Property</a>
                     </div>
                     <div class="p-4">
-                        <h3 class="text-sm font-medium text-zinc-900 mb-1">${streetAddress}</h3>
-                        <p class="text-xs text-zinc-500 mb-3">${cityState}</p>
+                        <h3 class="text-sm font-medium text-zinc-900 mb-1">${unitName || streetAddress}</h3>
                         <div class="flex items-center justify-between text-xs mb-2">
-                            <span class="text-zinc-500">${unitName ? `Unit ${unitName}` : '1 Unit'}</span>
+                            <span class="text-zinc-500">${unitName ? '1 Unit' : '1 Unit'}</span>
                             <span class="text-emerald-600 font-medium">${formattedRent}</span>
                         </div>
                         ${beds || baths || size ? `

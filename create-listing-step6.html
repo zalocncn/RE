@@ -34,9 +34,9 @@
                     const unitBadge = basicsSection.querySelector('span.bg-emerald-50');
                     if (unitBadge) {
                         if (savedData.unit.name && savedData.unit.name.trim() !== '') {
-                            unitBadge.textContent = `FEATURED ${savedData.unit.name}`;
+                            unitBadge.textContent = savedData.unit.name;
                         } else {
-                            unitBadge.textContent = 'FEATURED';
+                            unitBadge.textContent = '';
                         }
                     }
 
@@ -187,14 +187,27 @@
                 if (applicationsSection) {
                     const agreementCheckbox = document.getElementById('agreementCheckbox');
                     if (agreementCheckbox) {
-                        agreementCheckbox.checked = savedData.applications.agreementAccepted || false;
+                        // Only override default checked state if saved data explicitly sets it to false
+                        if (savedData.applications.agreementAccepted === false) {
+                            agreementCheckbox.checked = false;
+                        }
+                        // Otherwise keep the default checked state
+                        // Validate after setting checkbox state
+                        validateAgreement();
                     }
                 }
             }
         }
 
         // Load data when page loads
-        document.addEventListener('DOMContentLoaded', loadReviewData);
+        document.addEventListener('DOMContentLoaded', function() {
+            loadReviewData();
+            
+            // Clear the creatingListing flag after page loads (it was only needed during navigation)
+            setTimeout(() => {
+                sessionStorage.removeItem('creatingListing');
+            }, 100);
+        });
     </script>
 </head>
 <body class="bg-white text-zinc-900 antialiased selection:bg-emerald-100 selection:text-emerald-900 min-h-screen">
@@ -358,7 +371,7 @@
                                     <a href="create-listing.html" class="text-sm text-emerald-600 hover:text-emerald-700 font-medium">Edit Unit</a>
                                 </div>
                                 <div class="mb-3">
-                                    <span class="px-2 py-1 rounded bg-emerald-50 text-emerald-700 text-xs font-medium border border-emerald-100">FEATURED 14</span>
+                                    <span class="px-2 py-1 rounded bg-emerald-50 text-emerald-700 text-xs font-medium border border-emerald-100">14</span>
                                 </div>
                                 <div class="flex flex-wrap gap-4 text-sm text-zinc-700 mb-2">
                                     <span><strong>2</strong> Beds</span>
@@ -462,7 +475,7 @@
                                 <div class="space-y-6">
                                     <div class="border-t border-zinc-200 pt-6">
                                         <label class="flex items-start gap-3 cursor-pointer">
-                                            <input type="checkbox" id="agreementCheckbox" class="mt-0.5 w-4 h-4 rounded border-zinc-300 text-emerald-600 focus:ring-emerald-500" onchange="validateAgreement()">
+                                            <input type="checkbox" id="agreementCheckbox" class="mt-0.5 w-4 h-4 rounded border-zinc-300 text-emerald-600 focus:ring-emerald-500" checked>
                                             <span class="text-sm text-zinc-700">
                                                 By checking this box I agree as follows: I agree that I will provide accurate and 
                                                 <a href="#" class="text-blue-600 hover:text-blue-700 underline">non discriminatory</a> 
@@ -482,7 +495,7 @@
                 <!-- Navigation Buttons -->
                 <div class="mt-6">
                     <div class="flex justify-between">
-                        <a href="create-listing-step5.html" class="px-6 py-2.5 rounded-md border border-emerald-600 text-emerald-600 font-medium text-sm hover:bg-emerald-50 transition-colors flex items-center gap-2">
+                        <a href="create-listing-step5.html" onclick="sessionStorage.setItem('creatingListing', 'true')" class="px-6 py-2.5 rounded-md border border-emerald-600 text-emerald-600 font-medium text-sm hover:bg-emerald-50 transition-colors flex items-center gap-2">
                             <iconify-icon icon="lucide:arrow-left" width="16"></iconify-icon>
                             Previous
                         </a>
@@ -530,9 +543,15 @@
             }
         }
 
-        // Check agreement status on page load
+        // Check agreement status on page load and attach event listener
         document.addEventListener('DOMContentLoaded', function() {
             validateAgreement();
+            
+            // Attach event listener to checkbox
+            const agreementCheckbox = document.getElementById('agreementCheckbox');
+            if (agreementCheckbox) {
+                agreementCheckbox.addEventListener('change', validateAgreement);
+            }
         });
 
         function publishListing() {
@@ -542,95 +561,89 @@
                 alert('Please agree to the terms and conditions before creating a rental.');
                 return;
             }
-            // Check if agreement checkbox is checked
-            const agreementCheckbox = document.getElementById('agreementCheckbox');
-            if (!agreementCheckbox || !agreementCheckbox.checked) {
-                alert('Please agree to the terms and conditions before creating a rental.');
-                return;
-            }
 
             // First, try to get saved data from localStorage (from steps 1-5)
-            let listingData = ListingStorage.getCurrentListing();
+            let listingData = ListingStorage.getCurrentListing() || {};
             
-            // If no saved data exists, extract from the review page DOM as fallback
-            if (!listingData || Object.keys(listingData).length === 0) {
-                console.log('No saved data found, extracting from DOM');
-                listingData = {};
-                
-                // Extract data from the review page DOM
-                const addressHeader = document.querySelector('p.text-sm.text-zinc-500.uppercase')?.textContent?.trim() || '214 VIA ROBINA, SAN CLEMENTE, CA 92672';
+            // Always extract current values from review page to ensure we have the latest data
+            // This ensures that any updates made on the review page are captured
+            const addressHeader = document.querySelector('p.text-sm.text-zinc-500.uppercase')?.textContent?.trim() || listingData.address || '214 VIA ROBINA, SAN CLEMENTE, CA 92672';
             
             // Extract unit details from Basics section
             const basicsSection = document.querySelector('h2.text-lg.font-medium')?.closest('.border');
             const unitNameSpan = basicsSection?.querySelector('span.bg-emerald-50');
-            const unitName = unitNameSpan?.textContent?.replace('FEATURED ', '').trim() || '14';
+            let unitName = unitNameSpan?.textContent?.trim() || listingData.unit?.name || '14';
+            // Remove "FEATURED " prefix if present
+            if (unitName.toUpperCase().startsWith('FEATURED ')) {
+                unitName = unitName.substring(9).trim();
+            }
             
             const unitDetails = Array.from(basicsSection?.querySelectorAll('span.text-sm.text-zinc-700 strong') || []);
-            const beds = unitDetails[0]?.textContent || '2';
-            const baths = unitDetails[1]?.textContent || '1.5';
-            const size = unitDetails[2]?.textContent?.replace(/,/g, '') || '1000';
-            const monthlyRent = unitDetails[3]?.textContent?.replace(/[^\d]/g, '') || '1000';
-            const deposit = unitDetails[4]?.textContent?.replace(/[^\d]/g, '') || '1000';
-            const leaseLength = unitDetails[5]?.textContent || '12';
-            const dateAvailable = basicsSection?.querySelector('p.text-sm.text-zinc-500')?.textContent?.replace('Available ', '').trim() || '01/13/2026';
-
+            const beds = unitDetails[0]?.textContent?.trim() || listingData.unit?.beds || '2';
+            const baths = unitDetails[1]?.textContent?.trim() || listingData.unit?.baths || '1.5';
+            const size = unitDetails[2]?.textContent?.replace(/,/g, '').trim() || listingData.unit?.size || '1000';
+            const monthlyRent = unitDetails[3]?.textContent?.replace(/[^\d]/g, '').trim() || listingData.unit?.monthlyRent || '1000';
+            const deposit = unitDetails[4]?.textContent?.replace(/[^\d]/g, '').trim() || listingData.unit?.deposit || '1000';
+            const leaseLength = unitDetails[5]?.textContent?.trim() || listingData.unit?.leaseLength || '12';
+            
+            // Extract date available and year built from availability text
+            const availabilityText = basicsSection?.querySelector('p.text-sm.text-zinc-500')?.textContent?.trim() || '';
+            let dateAvailable = listingData.unit?.dateAvailable || '01/13/2026';
+            let yearBuilt = listingData.building?.yearBuilt || '';
+            
+            if (availabilityText) {
+                // Check if it contains "Available" and "Year Built"
+                if (availabilityText.includes('Available')) {
+                    const availablePart = availabilityText.split('•')[0].trim();
+                    const extractedDate = availablePart.replace('Available', '').trim();
+                    if (extractedDate) {
+                        dateAvailable = extractedDate;
+                    }
+                }
+                if (availabilityText.includes('Year Built:')) {
+                    const yearBuiltMatch = availabilityText.match(/Year Built:\s*(\d+)/);
+                    if (yearBuiltMatch) {
+                        yearBuilt = yearBuiltMatch[1].trim();
+                    }
+                }
+            }
+            
             // Extract unit amenities
             const amenitiesSections = Array.from(document.querySelectorAll('h2.text-lg.font-medium'));
             const unitAmenitiesSection = amenitiesSections.find(h => h.textContent === 'Amenities' && !h.nextElementSibling?.textContent?.includes('Property Amenities'))?.closest('.border');
             const unitAmenitiesText = unitAmenitiesSection?.querySelector('p.text-sm.text-zinc-500')?.textContent || '';
-            const unitAmenities = unitAmenitiesText ? unitAmenitiesText.split(',').map(a => a.trim()) : ['Mud Room', 'Recreation Room', 'Vinyl Flooring'];
+            const unitAmenities = unitAmenitiesText ? unitAmenitiesText.split(',').map(a => a.trim()) : (listingData.unit?.amenities || []);
             
-            // Extract property amenities
-            const propertyAmenitiesSection = amenitiesSections.find(h => h.textContent === 'Amenities' && h.nextElementSibling?.textContent?.includes('Property Amenities'))?.closest('.border');
-            const propertyAmenitiesText = propertyAmenitiesSection?.textContent || '';
-            const propertyAmenities = propertyAmenitiesText.includes('Property Amenities:') 
-                ? propertyAmenitiesText.split('Property Amenities:')[1]?.split('Utilities:')[0]?.trim().split(',').map(a => a.trim()) || []
-                : ['Air Conditioning', 'Furnished'];
-            const utilities = propertyAmenitiesText.includes('Utilities:')
-                ? [propertyAmenitiesText.split('Utilities:')[1]?.split('Parking')[0]?.trim()].filter(Boolean) || []
-                : ['Gas'];
-            const parkingType = propertyAmenitiesText.includes('Parking type:')
-                ? propertyAmenitiesText.split('Parking type:')[1]?.split('Parking fee:')[0]?.trim() || ''
-                : 'Garage';
-            const parkingFee = propertyAmenitiesText.includes('Parking fee:')
-                ? propertyAmenitiesText.split('Parking fee:')[1]?.split('Laundry')[0]?.replace(/[^\d]/g, '') || ''
-                : '100';
-            const laundry = propertyAmenitiesText.includes('Laundry:')
-                ? [propertyAmenitiesText.split('Laundry:')[1]?.split('Pets')[0]?.trim()].filter(Boolean) || []
-                : ['Washer/Dryer Hookup'];
-            const petsAllowed = propertyAmenitiesText.includes('Pets allowed:')
-                ? propertyAmenitiesText.split('Pets allowed:')[1]?.trim() || ''
-                : 'Dogs';
-
             // Extract media info
             const mediaSection = amenitiesSections.find(h => h.textContent === 'Media')?.closest('.border');
-            const photosCount = mediaSection?.querySelector('h3')?.textContent?.match(/\((\d+)\)/)?.[1] || '1';
-            const virtualToursCount = Array.from(mediaSection?.querySelectorAll('h3') || [])[1]?.textContent?.match(/\((\d+)\)/)?.[1] || '0';
-            const videosCount = Array.from(mediaSection?.querySelectorAll('h3') || [])[2]?.textContent?.match(/\((\d+)\)/)?.[1] || '0';
-
+            const photosCount = mediaSection?.querySelector('h3')?.textContent?.match(/\((\d+)\)/)?.[1] || (listingData.media?.photos?.toString() || '1');
+            const virtualToursCount = Array.from(mediaSection?.querySelectorAll('h3') || [])[1]?.textContent?.match(/\((\d+)\)/)?.[1] || (listingData.media?.virtualTours?.toString() || '0');
+            const videosCount = Array.from(mediaSection?.querySelectorAll('h3') || [])[2]?.textContent?.match(/\((\d+)\)/)?.[1] || (listingData.media?.videos?.toString() || '0');
+            
             // Extract description
             const descriptionSection = amenitiesSections.find(h => h.textContent === 'Description')?.closest('.border');
-            const descriptionText = descriptionSection?.querySelector('p.text-sm.text-zinc-600')?.textContent?.trim() || 'So many great things about this property and so spacious, bright, open concept, modern, minimalistic.';
+            const descriptionText = descriptionSection?.querySelector('p.text-sm.text-zinc-600')?.textContent?.trim() || listingData.description?.text || '';
             const rentSpecialText = Array.from(descriptionSection?.querySelectorAll('p.text-sm.text-zinc-500') || [])[1]?.textContent?.trim();
-            const rentSpecial = rentSpecialText === '-' ? null : rentSpecialText;
-
+            const rentSpecial = rentSpecialText === '-' ? null : (rentSpecialText || listingData.description?.rentSpecial || null);
+            
             // Extract contact info
             const contactSection = amenitiesSections.find(h => h.textContent === 'Contact Info')?.closest('.border');
             const contactInfo = Array.from(contactSection?.querySelectorAll('p.text-zinc-900.font-medium') || []);
-            const contactName = contactInfo[0]?.textContent?.trim() || 'Rita Noriega';
-            const contactRole = contactInfo[1]?.textContent?.trim() || 'Owner';
-            const contactEmail = contactInfo[2]?.textContent?.trim() || 'zalocn@gmail.com';
-            const contactPhone = contactInfo[3]?.textContent?.trim() || '(828) 938-3892';
+            const contactName = contactInfo[0]?.textContent?.trim() || `${listingData.contact?.firstName || 'Rita'} ${listingData.contact?.lastName || 'Noriega'}`;
+            const contactRole = contactInfo[1]?.textContent?.trim() || listingData.contact?.role || 'Owner';
+            const contactEmail = contactInfo[2]?.textContent?.trim() || listingData.contact?.email || 'zalocn@gmail.com';
+            const contactPhone = contactInfo[3]?.textContent?.trim() || listingData.contact?.phone || '';
             const nameParts = contactName.split(' ');
-
-            // Extract applications settings
-            const agreementCheckbox = document.getElementById('agreementCheckbox');
+            
+            // Extract applications settings (agreementCheckbox already declared at start of function)
             const agreementAccepted = agreementCheckbox?.checked || false;
-
-                // Build listing data object from DOM
-                listingData = {
-                    address: addressHeader,
+            
+            // Build/update listing data object, merging saved data with extracted values
+            listingData = {
+                ...listingData,
+                address: addressHeader,
                 unit: {
+                    ...listingData.unit,
                     name: unitName,
                     dateAvailable: dateAvailable,
                     beds: beds,
@@ -640,55 +653,36 @@
                     deposit: deposit,
                     leaseLength: leaseLength,
                     amenities: unitAmenities,
-                    description: ''
+                    description: listingData.unit?.description || ''
                 },
                 building: {
-                    yearBuilt: ''
-                },
-                propertyAmenities: propertyAmenities,
-                laundry: laundry,
-                utilities: utilities,
-                parking: {
-                    type: parkingType,
-                    fee: parkingFee
-                },
-                pets: {
-                    allowed: petsAllowed !== '',
-                    type: petsAllowed
+                    ...listingData.building,
+                    yearBuilt: yearBuilt
                 },
                 media: {
+                    ...listingData.media,
                     photos: parseInt(photosCount),
                     virtualTours: parseInt(virtualToursCount),
                     videos: parseInt(videosCount)
                 },
                 description: {
+                    ...listingData.description,
                     text: descriptionText,
                     rentSpecial: rentSpecial
                 },
                 contact: {
-                    firstName: nameParts[0] || 'Rita',
-                    lastName: nameParts.slice(1).join(' ') || 'Noriega',
-                    hideName: false,
+                    ...listingData.contact,
+                    firstName: nameParts[0] || listingData.contact?.firstName || 'Rita',
+                    lastName: nameParts.slice(1).join(' ') || listingData.contact?.lastName || 'Noriega',
                     role: contactRole.toLowerCase(),
                     email: contactEmail,
-                    phone: contactPhone,
-                    contactPreference: ''
+                    phone: contactPhone
                 },
                 applications: {
-                    enabled: false,
+                    enabled: listingData.applications?.enabled || false,
                     agreementAccepted: agreementAccepted
-                };
-            } else {
-                // Use saved data, but ensure all fields are present
-                // Merge with any data extracted from review page checkbox
-                const agreementCheckbox = document.getElementById('agreementCheckbox');
-                if (agreementCheckbox) {
-                    listingData.applications = {
-                        enabled: false,
-                        agreementAccepted: agreementCheckbox.checked || false
-                    };
                 }
-            }
+            };
 
             // Ensure required fields are set
             if (!listingData.address) {
@@ -708,6 +702,9 @@
             // Clear any temporary listing data
             ListingStorage.clearCurrentListing();
             
+            // Clear the creatingListing flag since we successfully completed the flow
+            sessionStorage.removeItem('creatingListing');
+            
             // Show success message
             console.log('Rental created successfully!', savedListing);
             
@@ -715,6 +712,24 @@
             // The properties page will automatically load and display the new rental
             window.location.href = 'properties.html';
         }
+
+        // Clear form data when navigating away (unless going to previous step or completing)
+        window.addEventListener('beforeunload', function(e) {
+            // Only clear if not navigating within the create listing flow
+            const isCreatingListing = sessionStorage.getItem('creatingListing');
+            if (!isCreatingListing) {
+                // Clear form data and localStorage
+                ListingStorage.clearCurrentListing();
+            }
+        });
+
+        // Clear the creatingListing flag when page loads (in case of refresh or back button)
+        window.addEventListener('pageshow', function(e) {
+            // If page was loaded from cache (back button), clear the flag
+            if (e.persisted) {
+                sessionStorage.removeItem('creatingListing');
+            }
+        });
     </script>
 
 </body>
