@@ -75,10 +75,6 @@
                 <span class="text-sm font-medium">Expenses</span>
             </a>
             <div class="pt-4 mt-4 border-t border-zinc-100 space-y-1">
-                <a href="messages.html" class="flex items-center gap-3 px-3 py-2 text-zinc-600 hover:bg-zinc-50 rounded-md transition-colors">
-                    <iconify-icon icon="lucide:mail" width="18" stroke-width="1.5"></iconify-icon>
-                    <span class="text-sm font-medium">Messages</span>
-                </a>
                 <a href="help.html" class="flex items-center gap-3 px-3 py-2 text-zinc-600 hover:bg-zinc-50 rounded-md transition-colors">
                     <iconify-icon icon="lucide:help-circle" width="18" stroke-width="1.5"></iconify-icon>
                     <span class="text-sm font-medium">Help</span>
@@ -157,14 +153,6 @@
 
                         <!-- Right Side - Form -->
                         <div class="lg:col-span-3">
-                            <!-- Discover Local Rent Insights -->
-                            <div class="mb-6">
-                                <a href="#" class="inline-flex items-center gap-2 text-sm text-blue-600 hover:text-blue-700">
-                                    <iconify-icon icon="lucide:info" width="16"></iconify-icon>
-                                    <span>Discover Local Rent Insights</span>
-                                </a>
-                            </div>
-
                             <!-- Vacant/Rented Toggle -->
                             <div class="mb-6 flex items-center justify-center p-4 bg-zinc-50 rounded-lg border border-zinc-200">
                                 <div class="flex items-center gap-3">
@@ -177,20 +165,64 @@
                                 </div>
                             </div>
 
+                            <!-- Add Your Property Section -->
+                            <div class="mb-8 bg-white rounded-lg border border-zinc-200 p-6">
+                                <h2 class="text-2xl font-medium text-zinc-900 mb-2">Add your property</h2>
+                                <p class="text-sm text-zinc-600 mb-6">
+                                    First, we need some details about your property. That way, we can tailor the property management experience to you.
+                                </p>
+
+                                <!-- Property Type Selection -->
+                                <div class="mb-6">
+                                    <label class="block text-sm font-medium text-zinc-900 mb-3">What kind of property is it?</label>
+                                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                                        <button 
+                                            type="button"
+                                            id="propertyTypeSingleFamily"
+                                            onclick="selectPropertyType('single-family')"
+                                            class="px-4 py-3 rounded-md border border-zinc-200 bg-white text-zinc-900 font-medium text-sm hover:bg-zinc-50 transition-colors"
+                                        >
+                                            Single Family Home
+                                        </button>
+                                        <button 
+                                            type="button"
+                                            id="propertyTypeCondo"
+                                            onclick="selectPropertyType('condo')"
+                                            class="px-4 py-3 rounded-md bg-emerald-600 text-white font-medium text-sm hover:bg-emerald-700 transition-colors"
+                                        >
+                                            Condo
+                                        </button>
+                                        <button 
+                                            type="button"
+                                            id="propertyTypeTownhome"
+                                            onclick="selectPropertyType('townhome')"
+                                            class="px-4 py-3 rounded-md border border-zinc-200 bg-white text-zinc-900 font-medium text-sm hover:bg-zinc-50 transition-colors"
+                                        >
+                                            Room
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Address Input -->
+                                <div class="mb-6">
+                                    <label for="propertyAddress" class="block text-sm font-medium text-zinc-900 mb-2">
+                                        What's the address of your property?
+                                    </label>
+                                    <input 
+                                        type="text" 
+                                        id="propertyAddress"
+                                        placeholder="Enter property address"
+                                        class="w-full px-4 py-2.5 rounded-md border border-zinc-200 bg-white text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                                        onchange="savePropertyTypeData()"
+                                    >
+                                </div>
+                            </div>
+
                             <!-- Unit Details Section -->
                             <div class="mb-8">
                                 <h2 class="text-lg font-medium text-zinc-900 mb-4">Unit Details</h2>
                                 
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                                    <!-- Unit Name -->
-                                    <div>
-                                        <label class="flex items-center gap-1 text-sm font-medium text-zinc-900 mb-2">
-                                            <span>Street Address</span>
-                                            <iconify-icon icon="lucide:info" width="14" class="text-zinc-400"></iconify-icon>
-                                        </label>
-                                        <input type="text" id="unitName" class="w-full px-4 py-2 rounded-md border border-zinc-200 bg-white text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent" oninput="saveUnitData(); validateForm();">
-                                    </div>
-
                                     <!-- Date Available -->
                                     <div>
                                         <label class="block text-sm font-medium text-zinc-900 mb-2">Date Available</label>
@@ -285,10 +317,6 @@
                             Save & Continue
                             <iconify-icon icon="lucide:arrow-right" width="16"></iconify-icon>
                         </button>
-                    </div>
-                    <div id="validationWarning" class="hidden mt-3 text-sm text-red-600 flex items-center gap-2 justify-end">
-                        <iconify-icon icon="lucide:alert-circle" width="16"></iconify-icon>
-                        <span>Please fill in all required fields before continuing.</span>
                     </div>
                 </div>
             </div>
@@ -1211,10 +1239,91 @@
             ListingStorage.saveCurrentListing(updated);
         }
 
+        // Property Type Selection Functions
+        let selectedPropertyType = 'condo'; // Default to Condo as shown in image
+
+        function selectPropertyType(type) {
+            selectedPropertyType = type;
+            
+            // Update button styles
+            const buttons = {
+                'single-family': document.getElementById('propertyTypeSingleFamily'),
+                'condo': document.getElementById('propertyTypeCondo'),
+                'townhome': document.getElementById('propertyTypeTownhome'),
+                'apartment': document.getElementById('propertyTypeApartment')
+            };
+            
+            // Reset all buttons
+            Object.values(buttons).forEach(btn => {
+                if (btn) {
+                    btn.classList.remove('bg-emerald-600', 'text-white', 'hover:bg-emerald-700');
+                    btn.classList.add('border', 'border-zinc-200', 'bg-white', 'text-zinc-900', 'hover:bg-zinc-50');
+                }
+            });
+            
+            // Highlight selected button
+            if (buttons[type]) {
+                buttons[type].classList.remove('border', 'border-zinc-200', 'bg-white', 'text-zinc-900', 'hover:bg-zinc-50');
+                buttons[type].classList.add('bg-emerald-600', 'text-white', 'hover:bg-emerald-700');
+            }
+            
+            savePropertyTypeData();
+        }
+
+        function savePropertyTypeData() {
+            const address = document.getElementById('propertyAddress')?.value || '';
+            const sharedLivingSpace = document.getElementById('sharedLivingSpace')?.checked || false;
+            
+            const current = ListingStorage.getCurrentListing() || {};
+            current.propertyType = selectedPropertyType;
+            current.sharedLivingSpace = sharedLivingSpace;
+            if (address) {
+                current.address = address;
+            }
+            ListingStorage.saveCurrentListing(current);
+        }
+
+        function addProperty() {
+            const address = document.getElementById('propertyAddress')?.value.trim();
+            
+            if (!address) {
+                alert('Please enter a property address.');
+                return;
+            }
+            
+            // Save property type data
+            savePropertyTypeData();
+            
+            // The property is now added - you can add additional logic here
+            // For example, navigate to next step or show success message
+            console.log('Property added:', {
+                type: selectedPropertyType,
+                address: address,
+                sharedLivingSpace: document.getElementById('sharedLivingSpace')?.checked || false
+            });
+        }
+
         // Load saved data when page loads
         document.addEventListener('DOMContentLoaded', function() {
             const saved = ListingStorage.getCurrentListing();
             const showListingCheckbox = document.getElementById('show-listing');
+            
+            // Load property type data
+            if (saved?.propertyType) {
+                selectPropertyType(saved.propertyType);
+            }
+            if (saved?.address) {
+                const addressInput = document.getElementById('propertyAddress');
+                if (addressInput) {
+                    addressInput.value = saved.address;
+                }
+            }
+            if (saved?.sharedLivingSpace) {
+                const checkbox = document.getElementById('sharedLivingSpace');
+                if (checkbox) {
+                    checkbox.checked = saved.sharedLivingSpace;
+                }
+            }
             
             // Load vacant/rented preference (default to vacant/unchecked)
             if (saved?.showOnListing !== undefined) {

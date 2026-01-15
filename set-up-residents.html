@@ -363,33 +363,86 @@
             chevron.classList.toggle('rotate-180');
         }
 
-        // Get all properties from localStorage
+        // Get all properties from ListingStorage (real-time data from properties tab)
+        // Excludes properties that already have residents set up
         function getAllProperties() {
-            const publishedListings = ListingStorage.getAllListings();
+            // Get all published listings from ListingStorage
+            let publishedListings = ListingStorage.getAllListings();
             
-            // Add default properties if no listings exist
-            const defaultProperties = [
-                {
-                    id: 'default-1',
-                    address: '123 Main Street, Los Angeles, CA 90001',
-                    unit: { monthlyRent: 1800, name: '' },
-                    status: 'active'
-                },
-                {
-                    id: 'default-2',
-                    address: '456 Oak Avenue, San Diego, CA 92101',
-                    unit: { monthlyRent: 2100, name: '' },
-                    status: 'vacant'
-                },
-                {
-                    id: 'default-3',
-                    address: '214 Via Robina, San Clemente, CA 92672',
-                    unit: { monthlyRent: 2500, name: '14' },
-                    status: 'active'
+            // Add default properties if no listings exist (for testing/demo)
+            if (publishedListings.length === 0) {
+                publishedListings = [
+                    {
+                        id: 'default-1',
+                        address: '123 Main Street, Los Angeles, CA 90001',
+                        unit: { monthlyRent: 1800, name: '' },
+                        status: 'active'
+                    },
+                    {
+                        id: 'default-2',
+                        address: '456 Oak Avenue, San Diego, CA 92101',
+                        unit: { monthlyRent: 2100, name: '' },
+                        status: 'vacant'
+                    },
+                    {
+                        id: 'default-3',
+                        address: '214 Via Robina, San Clemente, CA 92672',
+                        unit: { monthlyRent: 2500, name: '14' },
+                        status: 'active'
+                    }
+                ];
+            }
+            
+            // Get all residents to check which properties already have residents
+            const residents = JSON.parse(localStorage.getItem('residents') || '[]');
+            
+            // Get unique property IDs that already have residents
+            const propertiesWithResidents = new Set();
+            residents.forEach(resident => {
+                if (resident.propertyId) {
+                    propertiesWithResidents.add(resident.propertyId);
+                } else if (resident.property) {
+                    // Fallback: try to match by address if propertyId is not available
+                    const propertyId = getPropertyIdByAddressHelper(resident.property, publishedListings);
+                    if (propertyId) {
+                        propertiesWithResidents.add(propertyId);
+                    }
                 }
-            ];
+            });
+            
+            // Filter out properties that already have residents
+            const availableProperties = publishedListings.filter(property => {
+                return !propertiesWithResidents.has(property.id);
+            });
+            
+            return availableProperties;
+        }
 
-            return publishedListings.length > 0 ? publishedListings : defaultProperties;
+        // Helper function to get property ID by address (if needed for fallback)
+        // Accepts listings array to avoid calling getAllListings multiple times
+        function getPropertyIdByAddressHelper(address, listings) {
+            if (!address || !listings) return null;
+            
+            // Try to find exact match first
+            let property = listings.find(listing => {
+                const listingAddress = (listing.address || '').toLowerCase();
+                const searchAddress = address.toLowerCase();
+                return listingAddress === searchAddress || listingAddress.includes(searchAddress) || searchAddress.includes(listingAddress);
+            });
+            
+            // If no match, try to match by street address
+            if (!property) {
+                const streetMatch = address.match(/^([^,]+)/);
+                if (streetMatch) {
+                    const street = streetMatch[1].trim().toLowerCase();
+                    property = listings.find(listing => {
+                        const listingStreet = (listing.address || '').split(',')[0].trim().toLowerCase();
+                        return listingStreet === street || listingStreet.includes(street) || street.includes(listingStreet);
+                    });
+                }
+            }
+            
+            return property ? property.id : null;
         }
 
         // Format property address
@@ -455,12 +508,28 @@
             const filteredProperties = filterProperties(searchTerm);
             const dropdownContent = document.getElementById('propertyDropdownContent');
             
-            if (filteredProperties.length === 0) {
-                dropdownContent.innerHTML = `
-                    <div class="p-4 text-center text-sm text-zinc-500">
-                        No properties found
-                    </div>
-                `;
+            if (!filteredProperties || filteredProperties.length === 0) {
+                // Check if there are any properties at all
+                const allProperties = getAllProperties();
+                if (allProperties.length === 0) {
+                    dropdownContent.innerHTML = `
+                        <div class="p-4 text-center text-sm text-zinc-500">
+                            No properties available. Add a property first.
+                        </div>
+                    `;
+                } else if (searchTerm && searchTerm.trim() !== '') {
+                    dropdownContent.innerHTML = `
+                        <div class="p-4 text-center text-sm text-zinc-500">
+                            No properties found matching "${searchTerm}"
+                        </div>
+                    `;
+                } else {
+                    dropdownContent.innerHTML = `
+                        <div class="p-4 text-center text-sm text-zinc-500">
+                            All properties already have residents set up
+                        </div>
+                    `;
+                }
             } else {
                 dropdownContent.innerHTML = filteredProperties.map(property => 
                     renderPropertyCard(property)
@@ -486,7 +555,11 @@
         function selectProperty(propertyId, address) {
             const input = document.getElementById('propertySearchInput');
             const addressParts = formatPropertyAddress(address);
-            input.value = `${addressParts.street} ${addressParts.cityState}`;
+            // Don't fill the input - keep it empty for searching
+            // input.value = `${addressParts.street} ${addressParts.cityState}`;
+            if (input) {
+                input.value = ''; // Clear the input
+            }
             hidePropertyDropdown();
             
             // Store selected property ID for later use
@@ -804,16 +877,18 @@
             const propertyAddress = sessionStorage.getItem('selectedPropertyAddress');
             
             if (propertyId && propertyAddress) {
-                const input = document.getElementById('propertySearchInput');
-                const addressParts = formatPropertyAddress(propertyAddress);
-                if (input) {
-                    input.value = `${addressParts.street} ${addressParts.cityState}`;
-                }
+                // Don't prefill the input - let user search/select fresh
+                // const input = document.getElementById('propertySearchInput');
+                // const addressParts = formatPropertyAddress(propertyAddress);
+                // if (input) {
+                //     input.value = `${addressParts.street} ${addressParts.cityState}`;
+                // }
                 
                 // Show selected property card
                 const selectedCard = document.getElementById('selectedPropertyCard');
                 const streetEl = document.getElementById('selectedPropertyStreet');
                 const cityEl = document.getElementById('selectedPropertyCity');
+                const addressParts = formatPropertyAddress(propertyAddress);
                 
                 if (selectedCard && streetEl && cityEl) {
                     streetEl.textContent = addressParts.street;
@@ -858,7 +933,13 @@
             // Listen for custom event when properties are updated in same tab
             window.addEventListener('propertiesUpdated', function() {
                 const dropdown = document.getElementById('propertyDropdown');
-                if (!dropdown.classList.contains('hidden')) {
+                // Refresh dropdown if it's visible
+                if (dropdown && !dropdown.classList.contains('hidden')) {
+                    showPropertyDropdown();
+                }
+                // Also refresh if input has focus (user is searching)
+                const input = document.getElementById('propertySearchInput');
+                if (input && document.activeElement === input) {
                     showPropertyDropdown();
                 }
             });
