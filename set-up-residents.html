@@ -22,8 +22,8 @@
             </div>
             <div class="flex items-center gap-4 ml-auto">
                 <div class="flex items-center gap-2 px-3 py-1.5 hover:bg-zinc-50 rounded-md cursor-pointer transition-colors">
-                    <div class="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700 text-xs font-medium">R</div>
-                    <span class="text-sm font-medium text-zinc-900 hidden sm:block">Rita</span>
+                    <div class="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700 text-xs font-medium">G</div>
+                    <span class="text-sm font-medium text-zinc-900 hidden sm:block">Gonzalo</span>
                     <iconify-icon icon="lucide:chevron-down" width="16" class="text-zinc-400"></iconify-icon>
                 </div>
             </div>
@@ -119,14 +119,13 @@
                     <p class="text-sm text-zinc-600 mb-4">
                         The basic information below will set you up to create a lease document, upload documents, and set up online rent collection all in one place.
                     </p>
-                    <a href="#" class="inline-flex items-center gap-2 text-sm text-blue-600 hover:text-blue-700">
-                        <iconify-icon icon="lucide:check-circle" width="16"></iconify-icon>
+                    <a href="#" class="text-sm text-blue-600 hover:text-blue-700 underline">
                         Learn more about adding and managing residents
                     </a>
                 </div>
 
                 <!-- Select Property Section -->
-                <div class="bg-white rounded-lg border border-zinc-200 shadow-sm p-6">
+                <div class="bg-white rounded-lg border border-zinc-200 shadow-sm p-6 mb-6">
                     <h2 class="text-lg font-medium text-zinc-900 mb-4">Select Property</h2>
                     
                     <div class="space-y-4">
@@ -135,27 +134,217 @@
                                 type="text" 
                                 id="propertySearchInput"
                                 placeholder="Search by address or property name" 
-                                class="w-full px-4 py-2 pr-10 rounded-md border border-emerald-500 bg-white text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                                class="w-full px-4 py-2.5 pr-10 rounded-md border border-zinc-200 bg-white text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                                 autocomplete="off"
                                 oninput="handlePropertySearch(event)"
                                 onfocus="showPropertyDropdown()"
                             >
-                            <iconify-icon icon="lucide:search" width="18" class="absolute right-3 top-2.5 text-emerald-600 pointer-events-none"></iconify-icon>
+                            <iconify-icon icon="lucide:search" width="18" class="absolute right-3 top-3 text-zinc-400 pointer-events-none"></iconify-icon>
                             
                             <!-- Property Dropdown -->
-                            <div id="propertyDropdown" class="hidden absolute top-full left-0 right-0 mt-0.5 bg-white border border-emerald-500 rounded-b-md shadow-lg z-50 max-h-96 overflow-y-auto">
+                            <div id="propertyDropdown" class="hidden absolute top-full left-0 right-0 mt-1 bg-white border border-zinc-200 rounded-md shadow-lg z-50 max-h-96 overflow-y-auto">
                                 <div id="propertyDropdownContent" class="p-0">
                                     <!-- Properties will be loaded here -->
                                 </div>
                             </div>
                         </div>
 
-                        <div class="flex justify-end">
-                            <button id="continueButton" onclick="continueToPayments()" class="px-4 py-2 rounded-md bg-zinc-300 text-zinc-500 font-medium text-sm cursor-not-allowed transition-colors" disabled>
-                                Continue
-                            </button>
+                        <!-- Selected Property Card -->
+                        <div id="selectedPropertyCard" class="hidden bg-white border border-zinc-200 rounded-lg p-4">
+                            <div class="flex gap-4">
+                                <div class="w-24 h-24 bg-zinc-100 rounded-lg overflow-hidden flex-shrink-0 flex items-center justify-center">
+                                    <span class="text-xs text-zinc-500">Image Coming Soon</span>
+                                </div>
+                                <div class="flex-1">
+                                    <h3 id="selectedPropertyStreet" class="text-lg font-medium text-zinc-900 mb-1"></h3>
+                                    <p id="selectedPropertyCity" class="text-sm text-zinc-600"></p>
+                                </div>
+                            </div>
                         </div>
                     </div>
+                </div>
+
+                <!-- Set Lease Term Section -->
+                <div class="bg-white rounded-lg border border-zinc-200 shadow-sm p-6 mb-6">
+                    <div class="flex items-center gap-2 mb-4">
+                        <h2 class="text-lg font-medium text-zinc-900">Set Lease Term</h2>
+                        <iconify-icon icon="lucide:info" width="18" class="text-zinc-400"></iconify-icon>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <div class="flex gap-6">
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input 
+                                    type="radio" 
+                                    name="leaseType" 
+                                    value="fixed" 
+                                    id="leaseTypeFixed"
+                                    class="w-4 h-4 text-emerald-600 border-zinc-300 focus:ring-emerald-500"
+                                    checked
+                                    onchange="updateLeaseType()"
+                                >
+                                <span class="text-sm text-zinc-900">Fixed Dates</span>
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input 
+                                    type="radio" 
+                                    name="leaseType" 
+                                    value="monthly" 
+                                    id="leaseTypeMonthly"
+                                    class="w-4 h-4 text-emerald-600 border-zinc-300 focus:ring-emerald-500"
+                                    onchange="updateLeaseType()"
+                                >
+                                <span class="text-sm text-zinc-900">Month To Month</span>
+                            </label>
+                        </div>
+
+                        <div>
+                            <label for="leaseStartDate" class="block text-sm font-medium text-zinc-900 mb-2">Lease Start Date</label>
+                            <div class="relative">
+                                <input 
+                                    type="date" 
+                                    id="leaseStartDate"
+                                    class="w-full px-4 py-2.5 pr-10 rounded-md border border-zinc-200 bg-white text-zinc-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                                    onchange="saveResidentData()"
+                                >
+                                <iconify-icon icon="lucide:calendar" width="18" class="absolute right-3 top-3 text-zinc-400 pointer-events-none"></iconify-icon>
+                            </div>
+                        </div>
+
+                        <div id="leaseEndDateContainer">
+                            <label for="leaseEndDate" class="block text-sm font-medium text-zinc-900 mb-2">Lease End Date</label>
+                            <div class="relative">
+                                <input 
+                                    type="date" 
+                                    id="leaseEndDate"
+                                    class="w-full px-4 py-2.5 pr-10 rounded-md border border-zinc-200 bg-white text-zinc-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                                    onchange="saveResidentData()"
+                                >
+                                <iconify-icon icon="lucide:calendar" width="18" class="absolute right-3 top-3 text-zinc-400 pointer-events-none"></iconify-icon>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Add Residents Section -->
+                <div class="bg-white rounded-lg border border-zinc-200 shadow-sm p-6 mb-6">
+                    <div class="flex items-center gap-2 mb-4">
+                        <h2 class="text-lg font-medium text-zinc-900">Add Residents</h2>
+                        <iconify-icon icon="lucide:info" width="18" class="text-zinc-400"></iconify-icon>
+                    </div>
+                    
+                    <p class="text-sm text-zinc-600 mb-6">
+                        You may also add guarantors and minors, but you must include at least one resident.
+                    </p>
+
+                    <div id="residentsContainer">
+                        <!-- Resident forms will be added here -->
+                        <div class="resident-form" data-resident-index="0">
+                            <div class="mb-4">
+                                <label for="residentType0" class="block text-sm font-medium text-zinc-900 mb-2">Type</label>
+                                <select 
+                                    id="residentType0"
+                                    class="w-full px-4 py-2.5 rounded-md border border-zinc-200 bg-white text-zinc-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                                    onchange="saveResidentData()"
+                                >
+                                    <option value="resident" selected>Resident</option>
+                                    <option value="guarantor">Guarantor</option>
+                                    <option value="minor">Minor</option>
+                                </select>
+                            </div>
+
+                            <p class="text-sm text-zinc-600 mb-4">
+                                If you plan to use an Apartments.com lease, be sure to use residents' legal names as indicated on their drivers license or other valid form of identification.
+                            </p>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                                <div>
+                                    <label for="firstName0" class="block text-sm font-medium text-zinc-900 mb-2">First name</label>
+                                    <input 
+                                        type="text" 
+                                        id="firstName0"
+                                        class="w-full px-4 py-2.5 rounded-md border border-zinc-200 bg-white text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                                        placeholder=""
+                                        onchange="saveResidentData()"
+                                    >
+                                </div>
+                                <div>
+                                    <label for="middleName0" class="block text-sm font-medium text-zinc-900 mb-2">
+                                        Middle name <span class="text-zinc-400 font-normal">(optional)</span>
+                                    </label>
+                                    <input 
+                                        type="text" 
+                                        id="middleName0"
+                                        class="w-full px-4 py-2.5 rounded-md border border-zinc-200 bg-white text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                                        placeholder=""
+                                        onchange="saveResidentData()"
+                                    >
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                                <div>
+                                    <label for="lastName0" class="block text-sm font-medium text-zinc-900 mb-2">Last name</label>
+                                    <input 
+                                        type="text" 
+                                        id="lastName0"
+                                        class="w-full px-4 py-2.5 rounded-md border border-zinc-200 bg-white text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                                        placeholder=""
+                                        onchange="saveResidentData()"
+                                    >
+                                </div>
+                                <div>
+                                    <label for="email0" class="block text-sm font-medium text-zinc-900 mb-2">Email</label>
+                                    <input 
+                                        type="email" 
+                                        id="email0"
+                                        class="w-full px-4 py-2.5 rounded-md border border-zinc-200 bg-white text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                                        placeholder=""
+                                        onchange="saveResidentData()"
+                                    >
+                                </div>
+                            </div>
+
+                            <div>
+                                <label for="phone0" class="block text-sm font-medium text-zinc-900 mb-2">
+                                    Phone number <span class="text-zinc-400 font-normal">(optional)</span>
+                                </label>
+                                <input 
+                                    type="tel" 
+                                    id="phone0"
+                                    class="w-full px-4 py-2.5 rounded-md border border-zinc-200 bg-white text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                                    placeholder=""
+                                    onchange="saveResidentData()"
+                                >
+                            </div>
+                        </div>
+                    </div>
+
+                    <button 
+                        type="button"
+                        onclick="addAnotherPerson()" 
+                        class="mt-4 text-sm text-blue-600 hover:text-blue-700 font-medium"
+                    >
+                        + Add another person
+                    </button>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex justify-between gap-4">
+                    <button 
+                        type="button"
+                        onclick="cancelSetup()" 
+                        class="px-6 py-3 rounded-md border border-emerald-600 text-emerald-600 font-medium text-sm hover:bg-emerald-50 transition-colors"
+                    >
+                        Cancel
+                    </button>
+                    <button 
+                        type="button"
+                        onclick="finishSetup()" 
+                        class="px-6 py-3 rounded-md bg-emerald-600 text-white font-medium text-sm hover:bg-emerald-700 transition-colors"
+                    >
+                        Finish
+                    </button>
                 </div>
             </div>
         </div>
@@ -297,23 +486,26 @@
         function selectProperty(propertyId, address) {
             const input = document.getElementById('propertySearchInput');
             const addressParts = formatPropertyAddress(address);
-            input.value = addressParts.street;
+            input.value = `${addressParts.street} ${addressParts.cityState}`;
             hidePropertyDropdown();
             
             // Store selected property ID for later use
             sessionStorage.setItem('selectedPropertyId', propertyId);
             sessionStorage.setItem('selectedPropertyAddress', address);
             
-            // Save resident setup data for this property
-            saveResidentSetupData(propertyId, address);
+            // Show selected property card
+            const selectedCard = document.getElementById('selectedPropertyCard');
+            const streetEl = document.getElementById('selectedPropertyStreet');
+            const cityEl = document.getElementById('selectedPropertyCity');
             
-            // Enable Continue button
-            const continueButton = document.getElementById('continueButton');
-            if (continueButton) {
-                continueButton.disabled = false;
-                continueButton.classList.remove('bg-zinc-300', 'text-zinc-500', 'cursor-not-allowed');
-                continueButton.classList.add('bg-emerald-600', 'text-white', 'hover:bg-emerald-700', 'cursor-pointer');
+            if (selectedCard && streetEl && cityEl) {
+                streetEl.textContent = addressParts.street;
+                cityEl.textContent = addressParts.cityState;
+                selectedCard.classList.remove('hidden');
             }
+            
+            // Save resident setup data for this property
+            saveResidentData();
         }
 
         // Save resident setup data for property
@@ -330,8 +522,184 @@
             localStorage.setItem('propertyResidents', JSON.stringify(residentData));
         }
 
-        // Continue to payments setup
-        function continueToPayments() {
+        let residentCount = 1;
+
+        // Update lease type
+        function updateLeaseType() {
+            const leaseType = document.querySelector('input[name="leaseType"]:checked')?.value || 'fixed';
+            const leaseEndDateContainer = document.getElementById('leaseEndDateContainer');
+            
+            if (leaseType === 'fixed') {
+                // Show Lease End Date for Fixed Dates
+                if (leaseEndDateContainer) {
+                    leaseEndDateContainer.style.display = 'block';
+                }
+            } else {
+                // Hide Lease End Date for Month To Month
+                if (leaseEndDateContainer) {
+                    leaseEndDateContainer.style.display = 'none';
+                    // Clear the end date value when switching to Month To Month
+                    const leaseEndDateInput = document.getElementById('leaseEndDate');
+                    if (leaseEndDateInput) {
+                        leaseEndDateInput.value = '';
+                    }
+                }
+            }
+            
+            saveResidentData();
+        }
+
+        // Add another person
+        function addAnotherPerson() {
+            const container = document.getElementById('residentsContainer');
+            const newIndex = residentCount;
+            residentCount++;
+
+            const newResidentForm = document.createElement('div');
+            newResidentForm.className = 'resident-form mt-6 pt-6 border-t border-zinc-200';
+            newResidentForm.setAttribute('data-resident-index', newIndex);
+            newResidentForm.innerHTML = `
+                <div class="mb-4">
+                    <label for="residentType${newIndex}" class="block text-sm font-medium text-zinc-900 mb-2">Type</label>
+                    <select 
+                        id="residentType${newIndex}"
+                        class="w-full px-4 py-2.5 rounded-md border border-zinc-200 bg-white text-zinc-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                        onchange="saveResidentData()"
+                    >
+                        <option value="resident" selected>Resident</option>
+                        <option value="guarantor">Guarantor</option>
+                        <option value="minor">Minor</option>
+                    </select>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label for="firstName${newIndex}" class="block text-sm font-medium text-zinc-900 mb-2">First name</label>
+                        <input 
+                            type="text" 
+                            id="firstName${newIndex}"
+                            class="w-full px-4 py-2.5 rounded-md border border-zinc-200 bg-white text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                            placeholder=""
+                            onchange="saveResidentData()"
+                        >
+                    </div>
+                    <div>
+                        <label for="middleName${newIndex}" class="block text-sm font-medium text-zinc-900 mb-2">
+                            Middle name <span class="text-zinc-400 font-normal">(optional)</span>
+                        </label>
+                        <input 
+                            type="text" 
+                            id="middleName${newIndex}"
+                            class="w-full px-4 py-2.5 rounded-md border border-zinc-200 bg-white text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                            placeholder=""
+                            onchange="saveResidentData()"
+                        >
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label for="lastName${newIndex}" class="block text-sm font-medium text-zinc-900 mb-2">Last name</label>
+                        <input 
+                            type="text" 
+                            id="lastName${newIndex}"
+                            class="w-full px-4 py-2.5 rounded-md border border-zinc-200 bg-white text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                            placeholder=""
+                            onchange="saveResidentData()"
+                        >
+                    </div>
+                    <div>
+                        <label for="email${newIndex}" class="block text-sm font-medium text-zinc-900 mb-2">Email</label>
+                        <input 
+                            type="email" 
+                            id="email${newIndex}"
+                            class="w-full px-4 py-2.5 rounded-md border border-zinc-200 bg-white text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                            placeholder=""
+                            onchange="saveResidentData()"
+                        >
+                    </div>
+                </div>
+
+                <div>
+                    <label for="phone${newIndex}" class="block text-sm font-medium text-zinc-900 mb-2">
+                        Phone number <span class="text-zinc-400 font-normal">(optional)</span>
+                    </label>
+                    <input 
+                        type="tel" 
+                        id="phone${newIndex}"
+                        class="w-full px-4 py-2.5 rounded-md border border-zinc-200 bg-white text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                        placeholder=""
+                        onchange="saveResidentData()"
+                    >
+                </div>
+            `;
+
+            container.appendChild(newResidentForm);
+            saveResidentData();
+        }
+
+        // Save resident data
+        function saveResidentData() {
+            const propertyId = sessionStorage.getItem('selectedPropertyId');
+            const propertyAddress = sessionStorage.getItem('selectedPropertyAddress');
+            
+            if (!propertyId) return;
+
+            const leaseType = document.querySelector('input[name="leaseType"]:checked')?.value || 'fixed';
+            const leaseStartDate = document.getElementById('leaseStartDate')?.value || '';
+            const leaseEndDate = document.getElementById('leaseEndDate')?.value || '';
+
+            const residents = [];
+            const residentForms = document.querySelectorAll('.resident-form');
+            
+            residentForms.forEach((form, index) => {
+                const type = document.getElementById(`residentType${index}`)?.value || 'resident';
+                const firstName = document.getElementById(`firstName${index}`)?.value || '';
+                const middleName = document.getElementById(`middleName${index}`)?.value || '';
+                const lastName = document.getElementById(`lastName${index}`)?.value || '';
+                const email = document.getElementById(`email${index}`)?.value || '';
+                const phone = document.getElementById(`phone${index}`)?.value || '';
+
+                if (firstName || lastName || email) {
+                    residents.push({
+                        type,
+                        firstName,
+                        middleName,
+                        lastName,
+                        email,
+                        phone,
+                        property: propertyAddress,
+                        propertyId: propertyId,
+                        unit: '',
+                        leaseStartDate,
+                        leaseEndDate,
+                        leaseType
+                    });
+                }
+            });
+
+            const residentData = {
+                propertyId,
+                propertyAddress,
+                leaseType,
+                leaseStartDate,
+                leaseEndDate,
+                residents,
+                updatedAt: new Date().toISOString()
+            };
+
+            localStorage.setItem('residentSetupData', JSON.stringify(residentData));
+        }
+
+        // Cancel setup
+        function cancelSetup() {
+            if (confirm('Are you sure you want to cancel? Your progress will be saved.')) {
+                window.location.href = 'leases.html';
+            }
+        }
+
+        // Finish setup
+        function finishSetup() {
             const propertyId = sessionStorage.getItem('selectedPropertyId');
             const propertyAddress = sessionStorage.getItem('selectedPropertyAddress');
             
@@ -340,9 +708,81 @@
                 return;
             }
 
-            // Ensure resident setup data is saved
-            saveResidentSetupData(propertyId, propertyAddress);
+            const leaseStartDate = document.getElementById('leaseStartDate')?.value;
+            if (!leaseStartDate) {
+                alert('Please select a lease start date.');
+                return;
+            }
+
+            const leaseEndDate = document.getElementById('leaseEndDate')?.value || '';
+
+            // Get property details to extract unit information
+            const property = ListingStorage.getListingById(propertyId);
+            let unitName = '';
             
+            // First try to get unit from property object
+            if (property && property.unit && property.unit.name) {
+                unitName = property.unit.name;
+            } else {
+                // Try to extract unit from address if it contains "Unit"
+                const unitMatch = propertyAddress.match(/Unit\s+(\w+)/i);
+                if (unitMatch) {
+                    unitName = unitMatch[1];
+                }
+            }
+            
+            // If address already contains unit, don't duplicate it
+            const addressHasUnit = propertyAddress.toLowerCase().includes('unit');
+
+            // Collect all residents
+            const residents = [];
+            const residentForms = document.querySelectorAll('.resident-form');
+            let hasResident = false;
+            
+            residentForms.forEach((form, index) => {
+                const type = document.getElementById(`residentType${index}`)?.value || 'resident';
+                const firstName = document.getElementById(`firstName${index}`)?.value.trim();
+                const lastName = document.getElementById(`lastName${index}`)?.value.trim();
+                const middleName = document.getElementById(`middleName${index}`)?.value.trim();
+                const email = document.getElementById(`email${index}`)?.value.trim();
+                const phone = document.getElementById(`phone${index}`)?.value.trim();
+
+                if (firstName && lastName) {
+                    if (type === 'resident') {
+                        hasResident = true;
+                    }
+                    residents.push({
+                        type,
+                        firstName,
+                        middleName,
+                        lastName,
+                        email,
+                        phone,
+                        property: propertyAddress,
+                        propertyId: propertyId,
+                        unit: unitName,
+                        leaseStartDate,
+                        leaseEndDate,
+                        leaseType: document.querySelector('input[name="leaseType"]:checked')?.value || 'fixed'
+                    });
+                }
+            });
+
+            if (!hasResident) {
+                alert('You must include at least one resident.');
+                return;
+            }
+
+            // Save residents to localStorage
+            const existingResidents = JSON.parse(localStorage.getItem('residents') || '[]');
+            residents.forEach(resident => {
+                existingResidents.push(resident);
+            });
+            localStorage.setItem('residents', JSON.stringify(existingResidents));
+
+            // Save resident setup data
+            saveResidentData();
+
             // Navigate to payments setup
             window.location.href = `set-up-payments.html?propertyId=${propertyId}`;
         }
@@ -367,17 +807,42 @@
                 const input = document.getElementById('propertySearchInput');
                 const addressParts = formatPropertyAddress(propertyAddress);
                 if (input) {
-                    input.value = addressParts.street;
+                    input.value = `${addressParts.street} ${addressParts.cityState}`;
                 }
                 
-                // Enable Continue button
-                const continueButton = document.getElementById('continueButton');
-                if (continueButton) {
-                    continueButton.disabled = false;
-                    continueButton.classList.remove('bg-zinc-300', 'text-zinc-500', 'cursor-not-allowed');
-                    continueButton.classList.add('bg-emerald-600', 'text-white', 'hover:bg-emerald-700', 'cursor-pointer');
+                // Show selected property card
+                const selectedCard = document.getElementById('selectedPropertyCard');
+                const streetEl = document.getElementById('selectedPropertyStreet');
+                const cityEl = document.getElementById('selectedPropertyCity');
+                
+                if (selectedCard && streetEl && cityEl) {
+                    streetEl.textContent = addressParts.street;
+                    cityEl.textContent = addressParts.cityState;
+                    selectedCard.classList.remove('hidden');
                 }
             }
+
+            // Load saved resident data if exists
+            const savedData = localStorage.getItem('residentSetupData');
+            if (savedData) {
+                try {
+                    const data = JSON.parse(savedData);
+                    if (data.leaseStartDate) {
+                        document.getElementById('leaseStartDate').value = data.leaseStartDate;
+                    }
+                    if (data.leaseEndDate) {
+                        document.getElementById('leaseEndDate').value = data.leaseEndDate;
+                    }
+                    if (data.leaseType) {
+                        document.getElementById(`leaseType${data.leaseType === 'fixed' ? 'Fixed' : 'Monthly'}`).checked = true;
+                    }
+                } catch (e) {
+                    console.error('Error loading saved data:', e);
+                }
+            }
+            
+            // Set initial visibility of Lease End Date based on selected lease type
+            updateLeaseType();
             
             // Listen for storage changes to update dropdown (cross-tab)
             window.addEventListener('storage', function(e) {

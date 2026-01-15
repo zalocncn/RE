@@ -11,6 +11,7 @@
     <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/base.css">
+    <script src="js/listing-storage.js"></script>
 </head>
 <body class="bg-white text-zinc-900 antialiased selection:bg-emerald-100 selection:text-emerald-900 min-h-screen">
 
@@ -253,6 +254,91 @@
             return formatDate(end.toISOString());
         }
 
+        // Parse property address to extract components
+        function parsePropertyAddress(address, unit) {
+            if (!address) return { street: '', cityState: '', fullAddress: '' };
+            
+            // Check if address already contains unit information
+            const addressLower = address.toLowerCase();
+            const hasUnitInAddress = addressLower.includes('unit');
+            
+            // If address already has unit, use it as-is
+            if (hasUnitInAddress) {
+                return { 
+                    street: address.split(',')[0]?.trim() || '', 
+                    cityState: address.split(',').slice(1).join(',').trim() || '', 
+                    fullAddress: address 
+                };
+            }
+            
+            // Otherwise, construct full address with unit
+            const parts = address.split(',');
+            let street = parts[0]?.trim() || '';
+            let cityState = parts.slice(1).join(',').trim() || '';
+            
+            let fullAddress = street;
+            if (unit) {
+                fullAddress += `, Unit ${unit}`;
+            }
+            if (cityState) {
+                fullAddress += `, ${cityState}`;
+            }
+            
+            return { street, cityState, fullAddress };
+        }
+
+        // Get property ID by address
+        function getPropertyIdByAddress(address) {
+            if (!address) return null;
+            
+            const listings = ListingStorage.getAllListings();
+            
+            // Try to find exact match first
+            let property = listings.find(listing => {
+                const listingAddress = (listing.address || '').toLowerCase();
+                const searchAddress = address.toLowerCase();
+                return listingAddress === searchAddress || listingAddress.includes(searchAddress) || searchAddress.includes(listingAddress);
+            });
+            
+            // If no match, try to match by street address
+            if (!property) {
+                const streetMatch = address.match(/^([^,]+)/);
+                if (streetMatch) {
+                    const street = streetMatch[1].trim().toLowerCase();
+                    property = listings.find(listing => {
+                        const listingStreet = (listing.address || '').split(',')[0].trim().toLowerCase();
+                        return listingStreet === street || listingStreet.includes(street) || street.includes(listingStreet);
+                    });
+                }
+            }
+            
+            return property ? property.id : null;
+        }
+
+        // Format due day text
+        function getDueDayText(dueDay) {
+            if (!dueDay) return '';
+            const dayMap = {
+                '1': '1st',
+                '2': '2nd',
+                '3': '3rd',
+                '4': '4th',
+                '5': '5th',
+                '15': '15th',
+                '25': '25th',
+                'last': 'Last day'
+            };
+            return dayMap[dueDay] || `${dueDay}th`;
+        }
+
+        // Calculate total monthly rent including fees
+        function calculateTotalMonthlyRent(paymentData) {
+            if (!paymentData) return 0;
+            const monthlyRent = parseFloat(paymentData.monthlyRent || 0);
+            const feesTotal = (paymentData.monthlyFees || []).reduce((sum, fee) => sum + (parseFloat(fee.amount) || 0), 0);
+            return monthlyRent + feesTotal;
+        }
+
         // Load and display leases
         function loadLeases() {
             const residents = JSON.parse(localStorage.getItem('residents') || '[]');
@@ -269,13 +355,21 @@
                 // Group residents by property/unit
                 const leaseGroups = {};
                 residents.forEach(resident => {
-                    const key = `${resident.property}-${resident.unit}`;
+                    const key = `${resident.property}-${resident.unit || ''}`;
                     if (!leaseGroups[key]) {
+                        // Get propertyId if not already stored
+                        let propertyId = resident.propertyId;
+                        if (!propertyId) {
+                            propertyId = getPropertyIdByAddress(resident.property);
+                        }
+                        
                         leaseGroups[key] = {
                             property: resident.property,
-                            unit: resident.unit,
+                            propertyId: propertyId,
+                            unit: resident.unit || '',
                             residents: [],
                             leaseStartDate: resident.leaseStartDate,
+                            leaseEndDate: resident.leaseEndDate,
                             leaseType: resident.leaseType
                         };
                     }
@@ -286,17 +380,42 @@
                 Object.values(leaseGroups).forEach((lease, index) => {
                     const startDate = formatDate(lease.leaseStartDate);
                     // Use saved end date if available, otherwise calculate it
-                    const endDate = lease.residents[0]?.leaseEndDate 
-                        ? formatDate(lease.residents[0].leaseEndDate) 
+                    const endDate = lease.leaseEndDate 
+                        ? formatDate(lease.leaseEndDate) 
                         : calculateLeaseEndDate(lease.leaseStartDate, lease.leaseType);
                     const today = new Date();
                     const leaseStart = new Date(lease.leaseStartDate);
                     const isUpcoming = leaseStart > today;
-                    const isCurrent = leaseStart <= today;
+                    const isCurrent = leaseStart <= today && (!lease.leaseEndDate || new Date(lease.leaseEndDate) >= today);
+                    const isEndingSoon = lease.leaseEndDate && new Date(lease.leaseEndDate) > today && new Date(lease.leaseEndDate) <= new Date(today.getTime() + 30 * 24 * 60 * 60 * 1000);
                     
-                    // Get primary resident name
+                    // Get primary resident name (lowercase as shown in image)
                     const primaryResident = lease.residents.find(r => r.type === 'resident') || lease.residents[0];
                     const residentName = `${primaryResident.firstName} ${primaryResident.middleName ? primaryResident.middleName + ' ' : ''}${primaryResident.lastName}`.toLowerCase();
+
+                    // Parse address to get full formatted address
+                    const addressParts = parsePropertyAddress(lease.property, lease.unit);
+                    const fullAddress = addressParts.fullAddress || lease.property;
+
+                    // Get payment data for this property
+                    const propertyId = lease.propertyId || getPropertyIdByAddress(lease.property);
+                    const paymentData = JSON.parse(localStorage.getItem('propertyPayments') || '{}');
+                    const propertyPaymentData = propertyId ? paymentData[propertyId] : null;
+                    const hasPaymentSetup = propertyPaymentData && propertyPaymentData.setupComplete;
+                    
+                    // Format payment information
+                    let paymentInfoHtml = '';
+                    if (hasPaymentSetup) {
+                        const totalRent = calculateTotalMonthlyRent(propertyPaymentData);
+                        const dueDay = getDueDayText(propertyPaymentData.dueDay);
+                        paymentInfoHtml = `
+                            <div class="mt-2">
+                                <p class="text-sm text-zinc-600">
+                                    <span class="font-medium">$${totalRent.toLocaleString()}</span> due on the ${dueDay} of each month
+                                </p>
+                            </div>
+                        `;
+                    }
 
                     const leaseCard = document.createElement('div');
                     leaseCard.className = 'bg-white rounded-lg border border-zinc-200 shadow-sm p-6 hover:shadow-md transition-shadow';
@@ -304,26 +423,29 @@
                         <div class="flex gap-6">
                             <!-- Property Image -->
                             <div class="w-24 h-24 bg-zinc-100 rounded-lg overflow-hidden flex-shrink-0">
-                                <img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=200&h=200&fit=crop" alt="${lease.property}" class="w-full h-full object-cover">
+                                <img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=200&h=200&fit=crop" alt="${fullAddress}" class="w-full h-full object-cover">
                             </div>
 
                             <!-- Lease Details -->
                             <div class="flex-1">
                                 <div class="flex items-start justify-between mb-2">
                                     <div>
-                                        <h3 class="text-lg font-medium text-zinc-900 mb-1">${lease.property.includes('Via Robina') ? '214 Via Robina' : lease.property}, ${lease.unit}</h3>
-                                        <p class="text-sm text-zinc-500 mb-2">${lease.property.includes('San Clemente') || lease.property.includes('Via Robina') ? 'San Clemente, CA 92672' : ''}</p>
-                                        <a href="#" class="text-sm text-blue-600 hover:text-blue-700 font-medium">${residentName}</a>
+                                        <h3 class="text-lg font-medium text-zinc-900 mb-1">${fullAddress}</h3>
+                                        <a href="#" class="text-sm text-blue-600 hover:text-blue-700 font-medium block mt-1">${residentName}</a>
                                     </div>
                                     <div class="text-right">
-                                        ${isUpcoming ? `<span class="text-xs text-zinc-500 mb-1 block">${lease.residents.length} Upcoming</span>` : ''}
                                         ${isUpcoming ? '<span class="px-2 py-1 rounded-full bg-blue-50 text-blue-700 text-xs font-medium border border-blue-100">UPCOMING</span>' : ''}
                                     </div>
                                 </div>
                                 
                                 <div class="mt-4">
                                     <p class="text-sm text-zinc-600 mb-2">${startDate} - ${endDate}</p>
-                                    <a href="payments.html" class="text-sm text-blue-600 hover:text-blue-700">Set up payments</a>
+                                    ${hasPaymentSetup ? `
+                                        ${paymentInfoHtml}
+                                        <a href="set-up-payments-step4.html?propertyId=${propertyId}" class="text-sm text-blue-600 hover:text-blue-700 mt-2 inline-block">View payment details</a>
+                                    ` : `
+                                        <a href="set-up-payments.html?propertyId=${propertyId || ''}" class="text-sm text-blue-600 hover:text-blue-700">Set up payments</a>
+                                    `}
                                 </div>
                             </div>
 
